@@ -151,7 +151,7 @@ game_html = """
         <div class="empty"></div>
     </div>
 
-    <script>
+        <script>
         const canvas = document.getElementById("arcadeCanvas");
         const ctx = canvas.getContext("2d");
         const scoreEl = document.getElementById("score");
@@ -285,79 +285,71 @@ game_html = """
             if (pacman.dx > 0) r = 0; if (pacman.dx < 0) r = Math.PI;
             if (pacman.dy > 0) r = Math.PI / 2; if (pacman.dy < 0) r = Math.PI * 1.5;
             ctx.arc(pacman.x, pacman.y, pacman.radius, r + pacman.angle, r + Math.PI * 2 - pacman.angle);
+            ctx.lineTo(pacman.x, pacman.y);
+            ctx.fillStyle = "#facc15";
+            ctx.fill();
+            ctx.closePath();
 
-                        ctx.lineTo(pacman.x, pacman.y)
-            ctx.fillStyle = "#facc15"
-            ctx.fill()
-            ctx.closePath()
+            // FIXED: Converted Python hashtag comment to correct JS format
+            // Draw Ghost
+            ctx.beginPath();
+            ctx.arc(ghost.x + 10, ghost.y + 10, 10, Math.PI, 0, false);
+            ctx.lineTo(ghost.x + 20, ghost.y + 20);
+            ctx.lineTo(ghost.x, ghost.y + 20);
+            ctx.fillStyle = ghost.color;
+            ctx.fill();
+            ctx.closePath();
 
-            # Draw Ghost
-            ctx.beginPath()
-            ctx.arc(
-                ghost.x + 10, ghost.y + 10, 
-                10, Math.PI, 0, false
-            )
-            ctx.lineTo(ghost.x + 20, ghost.y + 20)
-            ctx.lineTo(ghost.x, ghost.y + 20)
-            ctx.fillStyle = ghost.color
-            ctx.fill()
-            ctx.closePath()
-
-            if (
-                Math.hypot(
-                    pacman.x - (ghost.x + 10), 
-                    pacman.y - (ghost.y + 10)
-                ) 
-                < pacman.radius + 10
-            ):
-                lives--
-                livesEl.innerText = lives
-                if (lives <= 0):
-                    alert("💥 GAME OVER!")
-                    score = 0
-                    scoreEl.innerText = score
-                    lives = 3
-                    livesEl.innerText = lives
-                    loadStage(1)
-                else:
-                    alert("💥 CAUGHT! Lost 1 life.")
-                    pacman.x = 160
-                    pacman.y = 240
-                    pacman.dx = 0
-                    pacman.dy = 0
-                    ghost.x = 160
-                    ghost.y = 40
-                return
+            // FIXED: Cleared Python colons out of standard JS structure logic
+            if (Math.hypot(pacman.x - (ghost.x + 10), pacman.y - (ghost.y + 10)) < pacman.radius + 10) {
+                lives--;
+                livesEl.innerText = lives;
+                if (lives <= 0) {
+                    alert("💥 GAME OVER!");
+                    score = 0;
+                    scoreEl.innerText = score;
+                    lives = 3;
+                    livesEl.innerText = lives;
+                    loadStage(1);
+                } else {
+                    alert("💥 CAUGHT! Lost 1 life.");
+                    pacman.x = 160;
+                    pacman.y = 240;
+                    pacman.dx = 0;
+                    pacman.dy = 0;
+                    ghost.x = 160;
+                    ghost.y = 40;
+                }
+                return;
             }
-            requestAnimationFrame(gameLoop)
+            requestAnimationFrame(gameLoop);
         }
 
-           // Create an overlay button to force mobile canvas render permissions
+        // FIXED: Combined clean boot button to clear mobile sandbox permission restrictions
         const bootBtn = document.createElement("button");
-        bootBtn.innerText = "🟢 TAP TO BOOT ARCADE ENGINE";
+        bootBtn.innerText = "🟢 START ARCADE GAME";
         bootBtn.style.position = "absolute";
         bootBtn.style.top = "40%";
         bootBtn.style.left = "10%";
         bootBtn.style.width = "80%";
-        bootBtn.style.padding = "20px";
-        bootBtn.style.fontSize = "20px";
+        bootBtn.style.padding = "15px";
+        bootBtn.style.fontSize = "18px";
         bootBtn.style.fontWeight = "bold";
         bootBtn.style.backgroundColor = "#0284c7";
         bootBtn.style.color = "#fff";
-        bootBtn.style.border = "3px solid #38bdf8";
-        bootBtn.style.borderRadius = "12px";
+        bootBtn.style.border = "2px solid #38bdf8";
+        bootBtn.style.borderRadius = "8px";
         bootBtn.style.cursor = "pointer";
         bootBtn.style.zIndex = "999";
         document.body.appendChild(bootBtn);
 
-        // Click event completely unlocks canvas loop
         bootBtn.onclick = function() {
             bootBtn.remove();
             loadStage(1);
             gameLoop();
         };
-
     </script>
+
 </body>
 </html>
 """

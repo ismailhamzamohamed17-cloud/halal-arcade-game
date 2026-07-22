@@ -303,7 +303,7 @@ game_html = """
             loadStage(1);
             gameLoop();
             """
-3. RENDER THE CABINET CONTAINER
+##3. RENDER THE CABINET CONTAINER##
 st.markdown('', unsafe_allow_html=True)
 st.components.v1.html(game_html, height=540, scrolling=False)
 st.markdown("", unsafe_allow_html=True)

@@ -9,19 +9,20 @@ st.markdown("""
     </style>
 """, unsafe_allow_html=True)
 
-st.title("🎯 Skill-Based Reward Arcade")
+st.title("🎯 Balanced Skill Arcade")
 
 with st.container():
     st.markdown("""
     <div class="rules-box">
-        <strong>🏆 Tournament Rules:</strong><br>
-        • Clear all dots to win the level and claim your reward! <br>
-        • Watch out: The Ghost tracks your coordinates and speeds up as you eat dots!
+        <strong>🏆 Smooth Gameplay Instructions:</strong><br>
+        • Click inside the black box first to focus your controls.<br>
+        • Use your keyboard Arrow Keys to guide Pac-Man. <br>
+        • The enemy speed is now heavily reduced for a fair, winnable challenge!
     </div>
     """, unsafe_allow_html=True)
 
-# Advanced HTML5 Canvas Game Engine with Tracking Smart AI Ghost
-chasing_game_html = """
+# Fixed Speed HTML5 Canvas Game Engine
+balanced_game_html = """
 <!DOCTYPE html>
 <html>
 <head>
@@ -45,8 +46,11 @@ chasing_game_html = """
         const scoreEl = document.getElementById("score");
 
         let score = 0;
-        let baseGhostSpeed = 1.0;
+        
+        // FIXED: Ghost speed cut down from 1.0 to 0.25 for slow, fair chasing movement
+        let ghostSpeed = 0.25; 
 
+        // FIXED: Balanced Pacman step speed for precision moving
         let pacman = { x: 200, y: 300, dx: 0, dy: 0, radius: 12, angle: 0.2, speed: 0.02 };
         let ghost = { x: 200, y: 80, size: 24, color: "#ef4444" };
 
@@ -60,35 +64,34 @@ chasing_game_html = """
         }
 
         window.addEventListener("keydown", (e) => {
-            if (e.key === "ArrowUp")    { pacman.dx = 0;  pacman.dy = -2.5; }
-            if (e.key === "ArrowDown")  { pacman.dx = 0;  pacman.dy = 2.5;  }
-            if (e.key === "ArrowLeft")  { pacman.dx = -2.5; pacman.dy = 0;  }
-            if (e.key === "ArrowRight") { pacman.dx = 2.5;  pacman.dy = 0;  }
+            // FIXED: Clean velocity step limits
+            if (e.key === "ArrowUp")    { pacman.dx = 0;  pacman.dy = -1.5; }
+            if (e.key === "ArrowDown")  { pacman.dx = 0;  pacman.dy = 1.5;  }
+            if (e.key === "ArrowLeft")  { pacman.dx = -1.5; pacman.dy = 0;  }
+            if (e.key === "ArrowRight") { pacman.dx = 1.5;  pacman.dy = 0;  }
             if(["ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.key)) e.preventDefault();
         });
 
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-            // Move Pacman
+            // Move Pacman and trap inside boundary walls
             pacman.x += pacman.dx; pacman.y += pacman.dy;
             if (pacman.x < pacman.radius) pacman.x = canvas.width - pacman.radius;
             if (pacman.x > canvas.width - pacman.radius) pacman.x = pacman.radius;
             if (pacman.y < pacman.radius) pacman.y = canvas.height - pacman.radius;
             if (pacman.y > canvas.height - pacman.radius) pacman.y = pacman.radius;
 
-            // Mouth oscillation
             pacman.angle += pacman.speed;
             if (pacman.angle > 0.4 || pacman.angle < 0.05) pacman.speed = -pacman.speed;
 
-            // SMART GHOST AI: Constantly recalculates direction vector toward Pacman's position
-            let currentSpeed = baseGhostSpeed + (score * 0.01); // Speeds up as score scales!
-            if (ghost.x < pacman.x) ghost.x += currentSpeed;
-            if (ghost.x > pacman.x) ghost.x -= currentSpeed;
-            if (ghost.y < pacman.y) ghost.y += currentSpeed;
-            if (ghost.y > pacman.y) ghost.y -= currentSpeed;
+            // FIXED SMART GHOST AI: Moves exceptionally slow towards your current x/y matrix
+            if (ghost.x < pacman.x) ghost.x += ghostSpeed;
+            if (ghost.x > pacman.x) ghost.x -= ghostSpeed;
+            if (ghost.y < pacman.y) ghost.y += ghostSpeed;
+            if (ghost.y > pacman.y) ghost.y -= ghostSpeed;
 
-            // Draw Dots & Check Collision
+            // Draw Dots
             let activeDotsCount = 0;
             dots.forEach(dot => {
                 if (dot.active) {
@@ -101,9 +104,9 @@ chasing_game_html = """
                 }
             });
 
-            // Check Win Condition
+            // Check Win
             if (activeDotsCount === 0) {
-                alert("🎉 LEVEL CLEARED! You scored " + score + " points! Take a screenshot and claim your reward!");
+                alert("🎉 LEVEL CLEARED! Perfect Score of " + score + "! You beat the chasing ghost!");
                 resetGame();
                 return;
             }
@@ -123,7 +126,7 @@ chasing_game_html = """
 
             // Ghost Collision (Game Over)
             if (Math.hypot(pacman.x - (ghost.x + 12), pacman.y - (ghost.y + 12)) < pacman.radius + 12) {
-                alert("💥 CAUGHT! Game Over. Try again to claim the reward!");
+                alert("💥 CAUGHT! Game Over. Practice makes perfect, try again!");
                 resetGame();
                 return;
             }
@@ -146,5 +149,6 @@ chasing_game_html = """
 """
 
 st.markdown('<div class="arcade-cabinet">', unsafe_allow_html=True)
-st.components.v1.html(chasing_game_html, height=470, scrolling=False)
+st.components.v1.html(balanced_game_html, height=470, scrolling=False)
 st.markdown('</div>', unsafe_allow_html=True)
+

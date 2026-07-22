@@ -301,16 +301,20 @@ game_html = """
             ctx.closePath();
 
             // FIXED: Cleared Python colons out of standard JS structure logic
+             // FIXED: Auto-Respawn and Restart Execution Engine Hooks Active
             if (Math.hypot(pacman.x - (ghost.x + 10), pacman.y - (ghost.y + 10)) < pacman.radius + 10) {
                 lives--;
                 livesEl.innerText = lives;
+                
                 if (lives <= 0) {
-                    alert("💥 GAME OVER!");
+                    alert("💥 GAME OVER! Starting back at Stage 1.");
                     score = 0;
                     scoreEl.innerText = score;
                     lives = 3;
                     livesEl.innerText = lives;
                     loadStage(1);
+                    // FIXED: Re-ignites engine loops instantly after Game Over alerts close
+                    requestAnimationFrame(gameLoop);
                 } else {
                     alert("💥 CAUGHT! Lost 1 life.");
                     pacman.x = 160;
@@ -319,10 +323,14 @@ game_html = """
                     pacman.dy = 0;
                     ghost.x = 160;
                     ghost.y = 40;
+                    // FIXED: Re-ignites engine loops instantly after single death respawns
+                    requestAnimationFrame(gameLoop);
                 }
                 return;
             }
             requestAnimationFrame(gameLoop);
+        }
+
         }
 
         // FIXED: Combined clean boot button to clear mobile sandbox permission restrictions

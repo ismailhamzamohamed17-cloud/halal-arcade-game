@@ -332,8 +332,31 @@ game_html = """
             requestAnimationFrame(gameLoop)
         }
 
-     loadStage(1);
-gameLoop();
+           // Create an overlay button to force mobile canvas render permissions
+        const bootBtn = document.createElement("button");
+        bootBtn.innerText = "🟢 TAP TO BOOT ARCADE ENGINE";
+        bootBtn.style.position = "absolute";
+        bootBtn.style.top = "40%";
+        bootBtn.style.left = "10%";
+        bootBtn.style.width = "80%";
+        bootBtn.style.padding = "20px";
+        bootBtn.style.fontSize = "20px";
+        bootBtn.style.fontWeight = "bold";
+        bootBtn.style.backgroundColor = "#0284c7";
+        bootBtn.style.color = "#fff";
+        bootBtn.style.border = "3px solid #38bdf8";
+        bootBtn.style.borderRadius = "12px";
+        bootBtn.style.cursor = "pointer";
+        bootBtn.style.zIndex = "999";
+        document.body.appendChild(bootBtn);
+
+        // Click event completely unlocks canvas loop
+        bootBtn.onclick = function() {
+            bootBtn.remove();
+            loadStage(1);
+            gameLoop();
+        };
+
     </script>
 </body>
 </html>

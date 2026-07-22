@@ -332,10 +332,8 @@ game_html = """
             requestAnimationFrame(gameLoop)
         }
 
-        window.onload = function() {
-            loadStage(1)
-            gameLoop()
-        }
+     loadStage(1);
+gameLoop();
     </script>
 </body>
 </html>

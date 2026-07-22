@@ -61,7 +61,7 @@ with st.container():
         unsafe_allow_html=True,
     )
 
-# 2. EMBEDDED RETRO ARCADE ENGINE
+# 2. EMBEDDED RETRO ARCADE ENGINE WITH SECURE RE-RENDER TRIGGER
 game_html = """
 <!DOCTYPE html>
 <html>
@@ -129,7 +129,7 @@ game_html = """
 </head>
 <body>
 
-    <div id="stage-banner">STAGE 1</div>
+    <div id="stage-banner">LOADING STAGE MATRIX...</div>
     <div id="ui">
         <div>SCORE: <span id="score">0</span></div>
         <div>LIVES: <span id="lives">3</span></div>
@@ -234,6 +234,14 @@ game_html = """
         function gameLoop() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+            // Render Map Assets background grid
+            ctx.fillStyle = "#1e293b";
+            dots.forEach(d => {
+                if (d.active) {
+                    ctx.beginPath(); ctx.arc(d.x, d.y, 4, 0, Math.PI * 2); ctx.fillStyle = "#fbbf24"; ctx.fill();
+                }
+            });
+
             pacman.x += pacman.dx; pacman.y += pacman.dy;
             if (pacman.x < pacman.radius) pacman.x = canvas.width - pacman.radius;
             if (pacman.x > canvas.width - pacman.radius) pacman.x = pacman.radius;
@@ -252,7 +260,6 @@ game_html = """
             dots.forEach(d => {
                 if (d.active) {
                     activeCount++;
-                    ctx.beginPath(); ctx.arc(d.x, d.y, 4, 0, Math.PI * 2); ctx.fillStyle = "#fbbf24"; ctx.fill();
                     if (Math.hypot(pacman.x - d.x, pacman.y - d.y) < pacman.radius + 4) {
                         d.active = false; score += 10; scoreEl.innerText = score;
                     }
@@ -278,32 +285,66 @@ game_html = """
             if (pacman.dx > 0) r = 0; if (pacman.dx < 0) r = Math.PI;
             if (pacman.dy > 0) r = Math.PI / 2; if (pacman.dy < 0) r = Math.PI * 1.5;
             ctx.arc(pacman.x, pacman.y, pacman.radius, r + pacman.angle, r + Math.PI * 2 - pacman.angle);
-            ctx.lineTo(pacman.x, pacman.y); ctx.fillStyle = "#facc15"; ctx.fill(); ctx.closePath();
 
-            // Draw Ghost
-            ctx.beginPath(); ctx.arc(ghost.x + 10, ghost.y + 10, 10, Math.PI, 0, false);
-            ctx.lineTo(ghost.x + 20, ghost.y + 20); ctx.lineTo(ghost.x, ghost.y + 20);
-            ctx.fillStyle = ghost.color; ctx.fill(); ctx.closePath();
-            if (Math.hypot(pacman.x - (ghost.x + 10), pacman.y - (ghost.y + 10)) < pacman.radius + 10) {
-            lives--; livesEl.innerText = lives;
-            if (lives <= 0) {
-            alert("💥 GAME OVER! Starting back at Stage 1.");
-            score = 0; scoreEl.innerText = score;
-            lives = 3; livesEl.innerText = lives;
-            loadStage(1);
-            } else {
-            alert("💥 CAUGHT! Lost 1 life.");
-            pacman.x = 160; pacman.y = 240; pacman.dx = 0; pacman.dy = 0;
-            ghost.x = 160; ghost.y = 40;
+                        ctx.lineTo(pacman.x, pacman.y)
+            ctx.fillStyle = "#facc15"
+            ctx.fill()
+            ctx.closePath()
+
+            # Draw Ghost
+            ctx.beginPath()
+            ctx.arc(
+                ghost.x + 10, ghost.y + 10, 
+                10, Math.PI, 0, false
+            )
+            ctx.lineTo(ghost.x + 20, ghost.y + 20)
+            ctx.lineTo(ghost.x, ghost.y + 20)
+            ctx.fillStyle = ghost.color
+            ctx.fill()
+            ctx.closePath()
+
+            if (
+                Math.hypot(
+                    pacman.x - (ghost.x + 10), 
+                    pacman.y - (ghost.y + 10)
+                ) 
+                < pacman.radius + 10
+            ):
+                lives--
+                livesEl.innerText = lives
+                if (lives <= 0):
+                    alert("💥 GAME OVER!")
+                    score = 0
+                    scoreEl.innerText = score
+                    lives = 3
+                    livesEl.innerText = lives
+                    loadStage(1)
+                else:
+                    alert("💥 CAUGHT! Lost 1 life.")
+                    pacman.x = 160
+                    pacman.y = 240
+                    pacman.dx = 0
+                    pacman.dy = 0
+                    ghost.x = 160
+                    ghost.y = 40
+                return
             }
-            return;
-            }
-            requestAnimationFrame(gameLoop);
-            }
-            loadStage(1);
-            gameLoop();
-            """
-##3. RENDER THE CABINET CONTAINER##
-st.markdown('', unsafe_allow_html=True)
+            requestAnimationFrame(gameLoop)
+        }
+
+        window.onload = function() {
+            loadStage(1)
+            gameLoop()
+        }
+    </script>
+</body>
+</html>
+"""
+
+# 3. RENDER THE CABINET CONTAINER
+st.markdown('<div class="arcade-cabinet">', unsafe_allow_html=True)
 st.components.v1.html(game_html, height=540, scrolling=False)
-st.markdown("", unsafe_allow_html=True)
+st.markdown("</div>", unsafe_allow_html=True)
+
+
+           

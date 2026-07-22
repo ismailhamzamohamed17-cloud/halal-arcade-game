@@ -269,4 +269,50 @@ story_game_html = """
             let activeDotsCount = 0;
             dots.forEach(dot => {
                 if (dot.active) {
-                    activeDotsCount++;ctx.beginPath(); ctx.arc(dot.x, dot.y, 4, 0, Math.PI * 2); ctx.fillStyle = "#fbbf24"; ctx.fill();if (Math.hypot(pacman.x - dot.x, pacman.y - dot.y) < pacman.radius + 4) {dot.active = false; score += 10; scoreEl.innerText = score;}}});// Chapter Progression Framework Checksif (activeDotsCount === 0) {if (currentStage < 3) {alert(📖 LEVEL COMPLETED! Moving on to Chapter ${currentStage + 1}...);loadStage(currentStage + 1);} else {alert("👑 CONGRATULATIONS! You cleared all stages and beat the Maldivian Campaign adventure! Take a screenshot to claim your reward.");score = 0; scoreEl.innerText = score;lives = 3; livesEl.innerText = lives;loadStage(1);return;}}// Draw Pacman Geometryctx.beginPath();let rot = 0;if (pacman.dx > 0) rot = 0; if (pacman.dx < 0) rot = Math.PI;if (pacman.dy > 0) rot = Math.PI / 2; if (pacman.dy < 0) rot = Math.PI * 1.5;ctx.arc(pacman.x, pacman.y, pacman.radius, rot + pacman.angle, rot + Math.PI * 2 - pacman.angle);ctx.lineTo(pacman.x, pacman.y); ctx.fillStyle = "#facc15"; ctx.fill(); ctx.closePath();// Draw Ghost Arc Structuresctx.beginPath(); ctx.arc(ghost.x + 10, ghost.y + 10, 10, Math.PI, 0, false);ctx.lineTo(ghost.x + 20, ghost.y + 20); ctx.lineTo(ghost.x, ghost.y + 20);ctx.fillStyle = ghost.color; ctx.fill(); ctx.closePath();// Entity Intersection Crash Conditionsif (Math.hypot(pacman.x - (ghost.x + 10), pacman.y - (ghost.y + 10)) < pacman.radius + 10) {lives--;livesEl.innerText = lives;if (lives <= 0) {alert("💥 GAME OVER! The campaign entities caught you. Starting back at Chapter 1.");score = 0; scoreEl.innerText = score;lives = 3; livesEl.innerText = lives;loadStage(1);} else {alert("💥 CAUGHT! Lost 1 life. Resetting stage positions...");pacman.x = 160; pacman.y = 240; pacman.dx = 0; pacman.dy = 0;ghost.x = 160; ghost.y = 40;}return;}requestAnimationFrame(gameLoop);}// Trigger Startup HooksloadStage(1);gameLoop();"""3. STREAMLIT RENDER WRAPPER CABINET CONTAINERst.markdown('', unsafe_allow_html=True)st.components.v1.html(story_game_html, height=540, scrolling=False)st.markdown('', unsafe_allow_html=True)
+                    activeDotsCount++;ctx.beginPath();
+                    ctx.arc(dot.x, dot.y, 4, 0, Math.PI * 2);
+                    ctx.fillStyle = "#fbbf24"; ctx.fill();
+                    if (Math.hypot(pacman.x - dot.x, pacman.y - dot.y) < pacman.radius + 4) {dot.active = false; score += 10; scoreEl.innerText = score;}}});
+                    // Chapter Progression Framework Checks
+                    if (activeDotsCount === 0) {if (currentStage < 3) {alert(📖 LEVEL COMPLETED! Moving on to Chapter ${currentStage + 1}...);loadStage(currentStage + 1);
+                    } else {alert("👑 CONGRATULATIONS! You cleared all stages and beat the Maldivian Campaign adventure! Take a screenshot to claim your reward.");
+                    score = 0;
+                    scoreEl.innerText = score;lives = 3; 
+                    livesEl.innerText = lives;
+                    loadStage(1);
+                    return;
+                    }}// Draw Pacman Geometryctx.beginPath();
+                    let rot = 0;
+                    if (pacman.dx > 0) rot = 0;
+                    if (pacman.dx < 0) rot = Math.PI;
+                    if (pacman.dy > 0) rot = Math.PI / 2;
+                    if (pacman.dy < 0) rot = Math.PI * 1.5;
+                    ctx.arc(pacman.x, pacman.y, pacman.radius, rot + pacman.angle, rot + Math.PI * 2 - pacman.angle);
+                    ctx.lineTo(pacman.x, pacman.y); 
+                    ctx.fillStyle = "#facc15";
+                    ctx.fill(); ctx.closePath();
+                    // Draw Ghost Arc Structures
+                    ctx.beginPath();
+                    ctx.arc(ghost.x + 10, ghost.y + 10, 10, Math.PI, 0, false);ctx.lineTo(ghost.x + 20, ghost.y + 20);
+                    ctx.lineTo(ghost.x, ghost.y + 20);
+                    ctx.fillStyle = ghost.color; 
+                    ctx.fill(); 
+                    ctx.closePath();
+                    // Entity Intersection Crash Conditions
+                    if (Math.hypot(pacman.x - (ghost.x + 10), pacman.y - (ghost.y + 10)) < pacman.radius + 10) {lives--;livesEl.innerText = lives;
+                    if (lives <= 0) {alert("💥 GAME OVER! The campaign entities caught you. Starting back at Chapter 1.");
+                    score = 0; 
+                    scoreEl.innerText = score;lives = 3; livesEl.innerText = lives;loadStage(1);
+                    } else {alert("💥 CAUGHT! Lost 1 life. Resetting stage positions...");
+                    pacman.x = 160;
+                    pacman.y = 240;
+                    pacman.dx = 0; 
+                    pacman.dy = 0;
+                    ghost.x = 160; 
+                    ghost.y = 40;
+                    }return;
+                    }requestAnimationFrame(gameLoop);
+                    }
+                    // Trigger Startup HooksloadStage(1);
+                    gameLoop();
+                    """3. STREAMLIT RENDER WRAPPER CABINET CONTAINERst.markdown('', unsafe_allow_html=True)st.components.v1.html(story_game_html, height=540, scrolling=False)st.markdown('', unsafe_allow_html=True)

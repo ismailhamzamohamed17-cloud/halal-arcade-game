@@ -34,7 +34,7 @@ st.markdown("""<style>
     }
 </style>""", unsafe_allow_html=True)
 
-st.markdown('<div class="bn"><b>🕹️ 100% INTERNAL OVERLAY MATRIX ENGAGED</b><br>All alert tabs completely eliminated. Standard collision warnings are now cleanly drawn right inside the display card arena layer.</div>', unsafe_allow_html=True)
+st.markdown('<div class="bn"><b>🕹️ BALANCED CANVAS SPACING FRAMEWORK</b><br>All 10 stages have been upgraded with wide-grid calculation logic to distribute 3D tokens smoothly across the 360px display layout.</div>', unsafe_allow_html=True)
 
 game_html = """
 <!DOCTYPE html><html><head>
@@ -48,7 +48,6 @@ game_html = """
     #ui { color:#fff; font-size:14px; font-weight:bold; width:360px; display:flex; justify-content:space-between; margin:6px 0; letter-spacing:0.5px; }
     #ticketVault { color: #22c55e; font-size:13px; font-weight:bold; width:360px; text-align:left; margin-bottom:4px; }
     
-    /* Dedicated internal notification state overlay layers */
     .msg-overlay { 
         position: absolute; inset: 0; background: rgba(3, 7, 18, 0.92); border-radius: 12px; 
         display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: #fff; text-align: center; padding: 15px;
@@ -70,17 +69,16 @@ game_html = """
 <body>
     <div id="ticketVault">🎟️ TERMINAL TICKETS: <span id="tix">0</span></div>
     <div id="ui"><div id="stg">STAGE 1</div><div>🥇 <span id="sc">0</span></div><div>❤️ <span id="lv">3</span></div></div>
+
     <div id="arenaWrapper">
         <canvas id="cv" width="360" height="360"></canvas>
         
-        <!-- 📑 IN-GAME NOTIFICATION OVERLAY MESH PANEL GRID -->
         <div id="clearScreen" class="msg-overlay">
             <div class="msg-title overlay-clear">STAGE CLEARED! 🎉</div>
             <div style="color:#94a3b8;font-size:12px;">Get ready for the next checkpoint challenge.</div>
             <button class="msg-btn" style="background:#22c55e;color:#000;" onclick="confirmAdvance()">CONTINUE MISSION ➡️</button>
         </div>
 
-        <!-- NEW: Hides window popup alert warnings when losing an arcade shield life -->
         <div id="caughtScreen" class="msg-overlay">
             <div class="msg-title overlay-warn">CAUGHT BY GHOST! 💥</div>
             <div style="color:#94a3b8;font-size:12px;">Resetting position. Be careful, officer!</div>
@@ -95,11 +93,10 @@ game_html = """
 
         <div id="victoryScreen" class="msg-overlay">
             <div class="msg-title overlay-win">CONGRATULATIONS! 🏆</div>
-            <div style="color:#fff;font-size:13px;font-weight:bold;line-height:1.4;">YOU FINISHED THE GAME!<br>You are the Ultimate尊 Arcade Champion!</div>
+            <div style="color:#fff;font-size:13px;font-weight:bold;line-height:1.4;">YOU FINISHED THE GAME!<br>You are the Ultimate Arcade Champion!</div>
             <button class="msg-btn" style="background:#eab308;color:#000;" onclick="confirmRestart()">PLAY AGAIN 🎮</button>
         </div>
     </div>
-
     <div class="ad-container-slot">
         <div style="font-weight:bold;color:#64748b;">ADVERTISEMENT AD BANNER</div>
         <div style="font-size:8px;color:#475569;">Google AdSense Responsive Unit Slot</div>
@@ -117,17 +114,18 @@ game_html = """
     const pSpeed = 0.085; 
     let lastTime = 0;
 
+    // --- 🔟 BALANCED 360px POSITION GENERATION MATRIX FOR ALL 10 STAGES ---
     const cfgs={
-        1:{n:"📍 MALE' STREETS", c:"#0284c7", d:"#fbbf24", numG:1, sp:0.016, gen:()=>{for(let i=45;i<=315;i+=68)for(let j=45;j<=315;j+=68)if(!(i==180&&j==260))dots.push({x:i,y:j,v:1})}},
-        2:{n:"📍 HULHUMALE' PHASE 2", c:"#f59e0b", d:"#f43f5e", numG:1, sp:0.020, gen:()=>{for(let i=50;i<=310;i+=52){dots.push({x:i,y:i,v:1});dots.push({x:i,y:360-i,v:1})}}},
-        3:{n:"📍 CROSSROADS HARBOR", c:"#10b981", d:"#a855f7", numG:2, sp:0.024, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*95,y:180+Math.sin(a)*95,v:1})}},
-        4:{n:"📍 MAAFUSHI LAGOON", c:"#ec4899", d:"#06b6d4", numG:2, sp:0.028, gen:()=>{for(let i=40;i<=320;i+=56)dots.push({x:i,y:180,v:1}),dots.push({x:180,y:i,v:1})}},
-        5:{n:"📍 BANOS ATOLL RESORT", c:"#8b5cf6", d:"#10b981", numG:2, sp:0.032, gen:()=>{for(let i=50;i<=310;i+=65)for(let j=50;j<=310;j+=65)dots.push({x:i,y:j,v:1})}},
-        6:{n:"📍 DHIGURAH SHIPWRECK", c:"#3b82f6", d:"#f97316", numG:3, sp:0.036, gen:()=>{for(let i=40;i<=320;i+=45)dots.push({x:i,y:50,v:1}),dots.push({x:i,y:310,v:1})}},
-        7:{n:"📍 THODDOO FARMLANDS", c:"#22c55e", d:"#eab308", numG:3, sp:0.040, gen:()=>{for(let r=40;r<=140;r+=50)for(let a=0;a<Math.PI*2;a+=Math.PI/3)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
-        8:{n:"📍 GAN AIRFIELD BASE", c:"#64748b", d:"#ec4899", numG:3, sp:0.044, gen:()=>{for(let i=30;i<=330;i+=40){dots.push({x:i,y:180,v:1})}}},
-        9:{n:"📍 HANIFARU BAY REEF", c:"#06b6d4", d:"#3b82f6", numG:3, sp:0.048, gen:()=>{for(let i=45;i<=315;i+=68)for(let j=45;j<=315;j+=68)dots.push({x:i,y:j,v:1})}},
-        10:{n:"👑 ADDU CITY FINALS", c:"#ef4444", d:"#ffffff", numG:4, sp:0.054, gen:()=>{for(let i=30;i<=330;i+=50)for(let j=30;j<=330;j+=50)dots.push({x:i,y:j,v:1})}}
+        1:{n:"📍 MALE' STREETS", c:"#0284c7", d:"#fbbf24", numG:1, sp:0.016, gen:()=>{for(let i=40;i<=320;i+=70)for(let j=40;j<=320;j+=70)if(!(i==180&&j==260))dots.push({x:i,y:j,v:1})}},
+        2:{n:"📍 HULHUMALE' PHASE 2", c:"#f59e0b", d:"#f43f5e", numG:1, sp:0.020, gen:()=>{for(let i=40;i<=320;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:360-i,v:1})}}},
+        3:{n:"📍 CROSSROADS HARBOR", c:"#10b981", d:"#a855f7", numG:2, sp:0.024, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/5)dots.push({x:180+Math.cos(a)*110,y:180+Math.sin(a)*110,v:1})}},
+        4:{n:"📍 MAAFUSHI LAGOON", c:"#ec4899", d:"#06b6d4", numG:2, sp:0.028, gen:()=>{for(let i=35;i<=325;i+=40)dots.push({x:i,y:180,v:1}),dots.push({x:180,y:i,v:1})}},
+        5:{n:"📍 BANOS ATOLL RESORT", c:"#8b5cf6", d:"#10b981", numG:2, sp:0.032, gen:()=>{for(let i=45;i<=315;i+=45)for(let j=45;j<=315;j+=45)dots.push({x:i,y:j,v:1})}},
+        6:{n:"📍 DHIGURAH SHIPWRECK", c:"#3b82f6", d:"#f97316", numG:3, sp:0.036, gen:()=>{for(let i=35;i<=325;i+=35)dots.push({x:i,y:55,v:1}),dots.push({x:i,y:305,v:1})}},
+        7:{n:"📍 THODDOO FARMLANDS", c:"#22c55e", d:"#eab308", numG:3, sp:0.040, gen:()=>{for(let r=45;r<=135;r+=45)for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
+        8:{n:"📍 GAN AIRFIELD BASE", c:"#64748b", d:"#ec4899", numG:3, sp:0.044, gen:()=>{for(let i=30;i<=330;i+=30){dots.push({x:i,y:180,v:1});dots.push({x:i,y:90,v:1});dots.push({x:i,y:270,v:1})}}},
+        9:{n:"📍 HANIFARU BAY REEF", c:"#06b6d4", d:"#3b82f6", numG:3, sp:0.048, gen:()=>{for(let i=45;i<=315;i+=54)for(let j=45;j<=315;j+=54)dots.push({x:i,y:j,v:1})}},
+        10:{n:"👑 ADDU CITY FINALS", c:"#ef4444", d:"#ffffff", numG:4, sp:0.054, gen:()=>{for(let i=30;i<=330;i+=42)for(let j=30;j<=330;j+=42)dots.push({x:i,y:j,v:1})}}
     };
 
     function load(n){
@@ -138,10 +136,11 @@ game_html = """
         const colors = ["#ef4444", "#a855f7", "#06b6d4", "#10b981"];
         for(let i=0; i<c.numG; i++) {
             ghosts.push({
-                x: 60 + (i * 45), y: 60 + (i * 35), r: 11, c: colors[i % colors.length], sp: c.sp * (1 + (i * 0.1))
+                x: 60 + (i * 65), y: 60 + (i * 45), r: 11, c: colors[i % colors.length], sp: c.sp * (1 + (i * 0.12))
             });
         }
     }
+
     let audioCtx = null;
     function setupAudio() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
@@ -175,7 +174,6 @@ game_html = """
             osc.start(); osc.stop(audioCtx.currentTime + 0.35);
         }
     }
-
     function handleScreenInput(clientX, clientY) {
         if (!gameRunning) return;
         let rect = canvas.getBoundingClientRect();
@@ -198,7 +196,6 @@ game_html = """
         }
     }, { passive: false });
 
-    // --- SECURE OVERLAY ACTION HANDLERS ---
     window.confirmAdvance = function() {
         clearScreen.style.display = "none"; gameRunning = true; lastTime = 0; load(stage + 1); requestAnimationFrame(loop);
     };
@@ -207,7 +204,6 @@ game_html = """
         score = 0; scEl.innerText = 0; lives = 3; lvEl.innerText = 3;
         gameRunning = true; lastTime = 0; load(1); requestAnimationFrame(loop);
     };
-    // Cleanly removes alert tabs when caught by phantoms
     window.confirmRespawn = function() {
         caughtScreen.style.display = "none"; gameRunning = true; lastTime = 0; p.x=180; p.y=260; p.dx=0; p.dy=0; load(stage); requestAnimationFrame(loop);
     };
@@ -247,14 +243,14 @@ game_html = """
         p.y = p.y < p.r ? 360 - p.r : (p.y > 360 - p.r ? p.r : p.y);
         p.a += p.s * dt; if(p.a > 0.45 || p.a < 0.05) p.s = -p.s;
 
-        // Render 3D Pacman
+        // Render 3D Pacman Hero
         ctx.beginPath();
         let pGrad = ctx.createRadialGradient(p.x-4, p.y-4, 2, p.x, p.y, p.r);
         pGrad.addColorStop(0, "#ffffff"); pGrad.addColorStop(0.2, "#facc15"); pGrad.addColorStop(0.7, "#ca8a04"); pGrad.addColorStop(1, "#1e1b4b"); 
         let rot=p.dx>0?0:(p.dx<0?Math.PI:(p.dy>0?Math.PI/2:(p.dy<0?Math.PI*1.5:0)));
         ctx.arc(p.x,p.y,p.r,rot+p.a,rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
 
-        // Render Ghosts
+        // Render 3D Ghosts
         ghosts.forEach(g => {
             if(g.x < p.x) g.x += g.sp * dt; else g.x -= g.sp * dt; 
             if(g.y < p.y) g.y += g.sp * dt; else g.y -= g.sp * dt;
@@ -271,7 +267,6 @@ game_html = """
                     finalScoreInfo.innerText = "Final Operation Score: " + score;
                     failScreen.style.display = "flex";
                 } else { 
-                    // FIXED: Replaced standard alert() call with safe in-game card mesh trigger
                     gameRunning = false; sound("lose");
                     caughtScreen.style.display = "flex"; 
                 }

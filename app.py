@@ -2,7 +2,7 @@ import streamlit as st
 import streamlit.components.v1 as components
 
 st.set_page_config(
-    page_title="Coconut Hunter: Secure Arcade", 
+    page_title="Coconut Hunter: Advanced 3D Arcade", 
     page_icon="🥥", 
     layout="centered"
 )
@@ -34,7 +34,7 @@ st.markdown("""<style>
     }
 </style>""", unsafe_allow_html=True)
 
-st.markdown('<div class="bn"><b>🥥 COCONUT HUNTER: ISLAND EXPEDITION ACTIVE</b><br>Characters updated with single tactical side-eyes. Food dots transformed into authentic brown coconuts with shell pores. Empty void replaced with lush jungle paths!</div>', unsafe_allow_html=True)
+st.markdown('<div class="bn"><b>🥥 COCONUT HUNTER: ADVANCED 3D PIPELINE</b><br>Glitches wiped! Coconuts now feature clean 3-dot triangular pores. Characters upgraded with minimal horizontal black tracking eyes over an advanced moonlit island backdrop.</div>', unsafe_allow_html=True)
 
 game_html = """
 <!DOCTYPE html><html><head>
@@ -43,11 +43,11 @@ game_html = """
     body { background:#030712; margin:0; padding:4px; display:flex; flex-direction:column; align-items:center; font-family:monospace; user-select:none; -webkit-user-select:none; }
     
     #arenaWrapper { position: relative; width: 360px; height: 360px; }
-    /* FIXED: Background color shifted to a dense tropical rainforest shade to break the black void appearance */
-    canvas { border:3px solid #15803d; background:#052e16; border-radius:12px; width:360px; height:360px; box-shadow: 0 12px 35px rgba(0,0,0,0.7); touch-action: none; cursor: crosshair; }
+    /* Advanced 3D Perspective Border Frame Styling */
+    canvas { border:3px solid #10b981; background:#020617; border-radius:12px; width:360px; height:360px; box-shadow: 0 16px 40px rgba(0,0,0,0.85); touch-action: none; cursor: crosshair; }
     
     #ui { color:#fff; font-size:14px; font-weight:bold; width:360px; display:flex; justify-content:space-between; margin:6px 0; letter-spacing:0.5px; }
-    #ticketVault { color: #22c55e; font-size:13px; font-weight:bold; width:360px; text-align:left; margin-bottom:4px; }
+    #ticketVault { color: #10b981; font-size:13px; font-weight:bold; width:360px; text-align:left; margin-bottom:4px; }
     
     .msg-overlay { 
         position: absolute; inset: 0; background: rgba(2, 6, 23, 0.94); border-radius: 12px; 
@@ -56,9 +56,9 @@ game_html = """
     .msg-title { font-size: 26px; font-weight: bold; margin-bottom: 8px; font-family: sans-serif; letter-spacing: 1px; }
     .msg-btn { margin-top: 15px; padding: 10px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; font-family: monospace; }
     
-    .overlay-clear { color: #22c55e; text-shadow: 0 0 10px rgba(34,197,94,0.4); }
+    .overlay-clear { color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.4); }
     .overlay-fail { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.4); }
-    .overlay-win { color: #eab308; text-shadow: 0 0 12px rgba(234,179,8,0.5); }
+    .overlay-win { color: #f59e0b; text-shadow: 0 0 12px rgba(245,158,11,0.5); }
     .overlay-warn { color: #f59e0b; text-shadow: 0 0 10px rgba(245,158,11,0.4); }
 
     .ad-container-slot {
@@ -76,7 +76,7 @@ game_html = """
         <div id="clearScreen" class="msg-overlay">
             <div class="msg-title overlay-clear">STAGE CLEARED! 🌴</div>
             <div style="color:#94a3b8;font-size:12px;">Island routes secured. Prepare for next checkpoint.</div>
-            <button class="msg-btn" style="background:#22c55e;color:#000;" onclick="confirmAdvance()">NEXT ISLAND ➡️</button>
+            <button class="msg-btn" style="background:#10b981;color:#000;" onclick="confirmAdvance()">NEXT ISLAND ➡️</button>
         </div>
 
         <div id="caughtScreen" class="msg-overlay">
@@ -93,8 +93,8 @@ game_html = """
 
         <div id="victoryScreen" class="msg-overlay">
             <div class="msg-title overlay-win">GRAND CHAMPION! 👑</div>
-            <div style="color:#fff;font-size:13px;font-weight:bold;line-height:1.4;">YOU HARVESTED ALL 10 ISLANDS!<br>You dominate the territorial leaderboard!</div>
-            <button class="msg-btn" style="background:#eab308;color:#000;" onclick="confirmRestart()">RESTART CAMPAIGN 🎮</button>
+            <div style="color:#fff;font-size:13px;font-weight:bold;line-height:1.4;">YOU HARVESTED ALL 10 ISLANDS!<br>You dominate the global leaderboard!</div>
+            <button class="msg-btn" style="background:#f59e0b;color:#000;" onclick="confirmRestart()">RESTART CAMPAIGN 🎮</button>
         </div>
     </div>
 
@@ -116,15 +116,15 @@ game_html = """
     let lastTime = 0;
 
     const cfgs={
-        1:{n:"🌴 MALE' ATOL ROAD", c:"#0284c7", d:"#854d0e", numG:1, sp:0.016, gen:()=>{for(let i=40;i<=320;i+=70)for(let j=40;j<=320;j+=70)if(!(i==180&&j==260))dots.push({x:i,y:j,v:1})}},
-        2:{n:"🌴 HULHUMALE' PLAINS", c:"#f59e0b", d:"#854d0e", numG:1, sp:0.020, gen:()=>{for(let i=40;i<=320;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:360-i,v:1})}}},
-        3:{n:"🌴 CROSSROADS LAGOON", c:"#22c55e", d:"#854d0e", numG:2, sp:0.024, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/5)dots.push({x:180+Math.cos(a)*110,y:180+Math.sin(a)*110,v:1})}},
-        4:{n:"🌴 MAAFUSHI COASTS", c:"#ec4899", d:"#854d0e", numG:2, sp:0.028, gen:()=>{for(let i=35;i<=325;i+=40)dots.push({x:i,y:180,v:1}),dots.push({x:180,y:i,v:1})}},
-        5:{n:"🌴 BANOS SAND BAR", c:"#8b5cf6", d:"#854d0e", numG:2, sp:0.032, gen:()=>{for(let i=45;i<=315;i+=45)for(let j=45;j<=315;j+=45)dots.push({x:i,y:j,v:1})}},
-        6:{n:"🌴 DHIGURAH REEF BAY", c:"#3b82f6", d:"#854d0e", numG:3, sp:0.036, gen:()=>{for(let i=35;i<=325;i+=35)dots.push({x:i,y:55,v:1}),dots.push({x:i,y:305,v:1})}},
-        7:{n:"🌴 THODDOO COCONUT GROVE", c:"#22c55e", d:"#854d0e", numG:3, sp:0.040, gen:()=>{for(let r=45;r<=135;r+=45)for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
-        8:{n:"🌴 GAN AIRSTRIP GRID", c:"#64748b", d:"#854d0e", numG:3, sp:0.044, gen:()=>{for(let i=30;i<=330;i+=30){dots.push({x:i,y:180,v:1});dots.push({x:i,y:90,v:1});dots.push({x:i,y:270,v:1})}}},
-        9:{n:"🌴 HANIFARU OCEAN WAY", c:"#06b6d4", d:"#854d0e", numG:3, sp:0.048, gen:()=>{for(let i=45;i<=315;i+=54)for(let j=45;j<=315;j+=54)dots.push({x:i,y:j,v:1})}},
+        1:{n:"🌴 MALE' ATOL ROAD", c:"#0284c7", d:"#78350f", numG:1, sp:0.016, gen:()=>{for(let i=40;i<=320;i+=70)for(let j=40;j<=320;j+=70)if(!(i==180&&j==260))dots.push({x:i,y:j,v:1})}},
+        2:{n:"🌴 HULHUMALE' PLAINS", c:"#f59e0b", d:"#78350f", numG:1, sp:0.020, gen:()=>{for(let i=40;i<=320;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:360-i,v:1})}}},
+        3:{n:"🌴 CROSSROADS LAGOON", c:"#10b981", d:"#78350f", numG:2, sp:0.024, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/5)dots.push({x:180+Math.cos(a)*110,y:180+Math.sin(a)*110,v:1})}},
+        4:{n:"🌴 MAAFUSHI COASTS", c:"#ec4899", d:"#78350f", numG:2, sp:0.028, gen:()=>{for(let i=35;i<=325;i+=40)dots.push({x:i,y:180,v:1}),dots.push({x:180,y:i,v:1})}},
+        5:{n:"🌴 BANOS SAND BAR", c:"#8b5cf6", d:"#78350f", numG:2, sp:0.032, gen:()=>{for(let i=45;i<=315;i+=45)for(let j=45;j<=315;j+=45)dots.push({x:i,y:j,v:1})}},
+        6:{n:"🌴 DHIGURAH REEF BAY", c:"#3b82f6", d:"#78350f", numG:3, sp:0.036, gen:()=>{for(let i=35;i<=325;i+=35)dots.push({x:i,y:55,v:1}),dots.push({x:i,y:305,v:1})}},
+        7:{n:"🌴 THODDOO COCONUT GROVE", c:"#22c55e", d:"#78350f", numG:3, sp:0.040, gen:()=>{for(let r=45;r<=135;r+=45)for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
+        8:{n:"🌴 GAN AIRSTRIP GRID", c:"#64748b", d:"#78350f", numG:3, sp:0.044, gen:()=>{for(let i=30;i<=330;i+=30){dots.push({x:i,y:180,v:1});dots.push({x:i,y:90,v:1});dots.push({x:i,y:270,v:1})}}},
+        9:{n:"🌴 HANIFARU OCEAN WAY", c:"#06b6d4", d:"#78350f", numG:3, sp:0.048, gen:()=>{for(let i=45;i<=315;i+=54)for(let j=45;j<=315;j+=54)dots.push({x:i,y:j,v:1})}},
         10:{n:"👑 ADDU FINALS", c:"#ef4444", d:"#ffffff", numG:4, sp:0.054, gen:()=>{for(let i=30;i<=330;i+=42)for(let j=30;j<=330;j+=42)dots.push({x:i,y:j,v:1})}}
     };
 
@@ -214,33 +214,43 @@ game_html = """
         let dt = timestamp - lastTime; if (dt > 60) dt = 60; lastTime = timestamp;
 
         ctx.clearRect(0,0,360,360);
-        let c=cfgs[stage];
 
-        // --- 🌴 IMMERSIVE BACKGROUND: DEEP JUNGLE CANOPY LEAF MAP PATHS ---
-        ctx.strokeStyle = "rgba(22, 101, 52, 0.25)"; ctx.lineWidth = 4;
-        for(let i=30; i<360; i+=60) {
-            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 360); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(360, i); ctx.stroke();
-        }
+        // --- 🌅 ADVANCED 3D ENVIRONMENT: MOONLIT ISLAND COASTLINE ENGINE BACKGROUND ---
+        // 1. Dark Ocean Blue Horizon Sky Gradient
+        let skyGrad = ctx.createLinearGradient(0, 0, 0, 160);
+        skyGrad.addColorStop(0, "#020617"); skyGrad.addColorStop(1, "#1e1b4b");
+        ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, 360, 160);
+        
+        // 2. Layered Deep Sea Puddle Water Mesh
+        let seaGrad = ctx.createLinearGradient(0, 160, 0, 360);
+        seaGrad.addColorStop(0, "#030712"); seaGrad.addColorStop(1, "#022c22");
+        ctx.fillStyle = seaGrad; ctx.fillRect(0, 160, 360, 200);
+
+        // 3. Vector Shaded Curved Island Island Coastline silhouette
+        ctx.beginPath(); ctx.moveTo(0, 240);
+        ctx.bezierCurveTo(90, 200, 270, 290, 360, 220);
+        ctx.lineTo(360, 360); ctx.lineTo(0, 360);
+        ctx.fillStyle = "rgba(4, 47, 46, 0.4)"; ctx.fill(); ctx.closePath();
 
         let active=0;
-        // --- 🥥 RENDER DETAILED REALISTIC BROWN COCONUTS WITH TWO GERMINATION PORES ---
+        // --- 🥥 RENDER DETAILED COCONUTS WITH EXACT 3-DOT TRIANGULAR PORE MATRIX ---
         dots.forEach(d=>{
             if(d.v){
                 active++;
                 ctx.beginPath();
-                // Spherical husk texture layout shading
-                let dotGrad = ctx.createRadialGradient(d.x-1.5, d.y-1.5, 0.5, d.x, d.y, 6.5);
-                dotGrad.addColorStop(0, "#d97706"); // Shell gloss top shine highlight
-                dotGrad.addColorStop(0.4, "#78350f"); // Core brown coconut meat coloring
-                dotGrad.addColorStop(1, "#290b00"); // Base background dropshadow blend
-                ctx.arc(d.x, d.y, 6.5, 0, Math.PI*2); ctx.fillStyle=dotGrad; ctx.fill(); ctx.closePath();
+                let dotGrad = ctx.createRadialGradient(d.x-1.5, d.y-1.5, 0.5, d.x, d.y, 7);
+                dotGrad.addColorStop(0, "#b45309"); // Shell gloss top shine highlight
+                dotGrad.addColorStop(0.5, "#78350f"); // Core brown coconut meat coloring
+                dotGrad.addColorStop(1, "#1e0700"); // Depth shadows edge
+                ctx.arc(d.x, d.y, 7, 0, Math.PI*2); ctx.fillStyle=dotGrad; ctx.fill(); ctx.closePath();
                 
-                // FIXED: Embed two precise dark brown germ eyes directly onto the food nodes shell surface
-                ctx.beginPath(); ctx.arc(d.x - 2, d.y + 1, 1.2, 0, Math.PI*2); ctx.fillStyle="#1c0700"; ctx.fill(); ctx.closePath();
-                ctx.beginPath(); ctx.arc(d.x + 2, d.y + 1, 1.2, 0, Math.PI*2); ctx.fillStyle="#1c0700"; ctx.fill(); ctx.closePath();
+                // FIXED: Draws three precise dark brown dots positioned cleanly in a triangular formation
+                ctx.fillStyle = "#120300";
+                ctx.beginPath(); ctx.arc(d.x, d.y - 2.5, 1, 0, Math.PI*2); ctx.fill(); ctx.closePath();     // Top corner dot
+                ctx.beginPath(); ctx.arc(d.x - 2, d.y + 1.5, 1, 0, Math.PI*2); ctx.fill(); ctx.closePath();   // Bottom left corner dot
+                ctx.beginPath(); ctx.arc(d.x + 2, d.y + 1.5, 1, 0, Math.PI*2); ctx.fill(); ctx.closePath();   // Bottom right corner dot
                 
-                if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+6.5){
+                if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+7){
                     d.v=0; score+=10; scEl.innerText=score; sound("waka");
                     arcadeTickets += 1; localStorage.setItem("arcade_tix_vault", arcadeTickets.toString()); tixEl.innerText = arcadeTickets;
                 }
@@ -258,19 +268,25 @@ game_html = """
         p.y = p.y < p.r ? 360 - p.r : (p.y > 360 - p.r ? p.r : p.y);
         p.a += p.s * dt; if(p.a > 0.45 || p.a < 0.05) p.s = -p.s;
 
-        // --- 🥥 3D SHADED COCONUT HERO DISK WITH 1 TACTICAL SIDE-EYE ---
+        // --- 🥥 3D RE-SHADED COCONUT HERO DISK WITH DYNAMIC ORIENTATION LINES ---
         ctx.beginPath();
         let pGrad = ctx.createRadialGradient(p.x-4, p.y-4, 2, p.x, p.y, p.r);
-        pGrad.addColorStop(0, "#ffedd5"); pGrad.addColorStop(0.3, "#b45309"); pGrad.addColorStop(0.8, "#78350f"); pGrad.addColorStop(1, "#451a03"); 
+        pGrad.addColorStop(0, "#fed7aa"); pGrad.addColorStop(0.3, "#92400e"); pGrad.addColorStop(0.8, "#451a03"); pGrad.addColorStop(1, "#1c0700"); 
         let rot=p.dx>0?0:(p.dx<0?Math.PI:(p.dy>0?Math.PI/2:(p.dy<0?Math.PI*1.5:0)));
         ctx.arc(p.x, p.y, p.r, rot+p.a, rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
 
-        // FIXED: Render exactly ONE large, tracking tactical cyclops eye on the hero shell flank mapping
-        let eyeOffsetX = Math.cos(rot + 0.4) * 5; let eyeOffsetY = Math.sin(rot + 0.4) * 5;
-        ctx.beginPath(); ctx.arc(p.x + eyeOffsetX, p.y + eyeOffsetY, 3.5, 0, Math.PI*2); ctx.fillStyle="#fff"; ctx.fill(); ctx.closePath();
-        ctx.beginPath(); ctx.arc(p.x + eyeOffsetX + (Math.cos(rot)*1), p.y + eyeOffsetY + (Math.sin(rot)*1), 1.5, 0, Math.PI*2); ctx.fillStyle="#000"; ctx.fill(); ctx.closePath();
+        // FIXED: Render sleek horizontal tracking visor band with black dot pupil eye
+        let eyeAngle = rot + 0.35;
+        let pEyeX = p.x + Math.cos(eyeAngle) * 5.5;
+        let pEyeY = p.y + Math.sin(eyeAngle) * 5.5;
+        
+        // Horizontal slot shade mask background
+        ctx.strokeStyle = "rgba(28, 7, 0, 0.6)"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
+        ctx.beginPath(); ctx.moveTo(pEyeX - 3.5, pEyeY); ctx.lineTo(pEyeX + 3.5, pEyeY); ctx.stroke(); ctx.closePath();
+        // Centered minimal sharp black dot eye
+        ctx.beginPath(); ctx.arc(pEyeX, pEyeY, 1.4, 0, Math.PI*2); ctx.fillStyle = "#000000"; ctx.fill(); ctx.closePath();
 
-        // --- 🏃 RIVAL COCONUT HUNTERS WITH 1 ALIGNED COMBAT SIDE-EYE ---
+        // --- 🏃 RIVAL COCONUT HUNTERS TRACKING ENGINE MESH ---
         ghosts.forEach(g => {
             if(g.x < p.x) { g.x += g.sp * dt; g.dx = 1; } else { g.x -= g.sp * dt; g.dx = -1; }
             if(g.y < p.y) { g.y += g.sp * dt; g.dy = 1; } else { g.y -= g.sp * dt; g.dy = -1; }
@@ -279,14 +295,18 @@ game_html = """
 
             ctx.beginPath();
             let gGrad = ctx.createRadialGradient(g.x-4, g.y-4, 2, g.x, g.y, g.r);
-            gGrad.addColorStop(0, "#ffffff"); gGrad.addColorStop(0.25, g.c); gGrad.addColorStop(0.8, "#15001a"); gGrad.addColorStop(1, "#000000");
+            gGrad.addColorStop(0, "#ffffff"); gGrad.addColorStop(0.25, g.c); gGrad.addColorStop(0.8, "#090514"); gGrad.addColorStop(1, "#000000");
             let gRot = g.dx > 0 ? 0 : (g.dx < 0 ? Math.PI : (g.dy > 0 ? Math.PI/2 : 0));
             ctx.arc(g.x, g.y, g.r, gRot+g.a, gRot+Math.PI*2-g.a); ctx.lineTo(g.x, g.y); ctx.fillStyle=gGrad; ctx.fill(); ctx.closePath();
 
-            // FIXED: Render exactly ONE unified, high-contrast tracking eye onto rival faces
-            let gEyeX = Math.cos(gRot + 0.3) * 4; let gEyeY = Math.sin(gRot + 0.3) * 4;
-            ctx.beginPath(); ctx.arc(g.x + gEyeX, g.y + gEyeY, 3.5, 0, Math.PI*2); ctx.fillStyle="#fff"; ctx.fill(); ctx.closePath();
-            ctx.beginPath(); ctx.arc(g.x + gEyeX, g.y + gEyeY, 1.5, 0, Math.PI*2); ctx.fillStyle="#000"; ctx.fill(); ctx.closePath();
+            // FIXED: Render matching minimal horizontal black dot eyes for competitive hunters
+            let gEyeAngle = gRot + 0.3;
+            let gEyeX = g.x + Math.cos(gEyeAngle) * 5;
+            let gEyeY = g.y + Math.sin(gEyeAngle) * 5;
+            
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.5)"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
+            ctx.beginPath(); ctx.moveTo(gEyeX - 3, gEyeY); ctx.lineTo(gEyeX + 3, gEyeY); ctx.stroke(); ctx.closePath();
+            ctx.beginPath(); ctx.arc(gEyeX, gEyeY, 1.4, 0, Math.PI*2); ctx.fillStyle = "#000000"; ctx.fill(); ctx.closePath();
 
             if(Math.hypot(p.x-g.x, p.y-g.y) < p.r+g.r){
                 lives--; lvEl.innerText=lives;
@@ -302,12 +322,38 @@ game_html = """
 
         if (gameRunning) requestAnimationFrame(loop);
     }
-
-    const btn=document.createElement("button"); btn.innerText="🥥 LAUNCH COCONUT HUNTER PRO"; Object.assign(btn.style,{position:"absolute",top:"35%",left:"5%",width:"90%",padding:"15px",fontSize:"15px",fontWeight:"bold",background:"#16a34a",color:"#fff",border:"2px solid #4ade80",borderRadius:"8px",zIndex:"999",fontFamily:"monospace"});
-    document.body.appendChild(btn); btn.onclick=()=>{btn.remove(); setupAudio(); sound("level"); gameRunning=true; load(1); requestAnimationFrame(loop)};
-</script></body></html>
+    const btn=document.createElement("button"); 
+    btn.innerText="🥥 LAUNCH COCONUT HUNTER PRO"; 
+    Object.assign(btn.style,{
+        position:"absolute",
+        top:"35%",
+        left:"5%",
+        width:"90%",
+        padding:"15px",
+        fontSize:"15px",
+        fontWeight:"bold",
+        background:"#10b981",
+        color:"#000",
+        border:"2px solid #34d399",
+        borderRadius:"8px",
+        zIndex:"999",
+        fontFamily:"monospace"
+    });
+    document.body.appendChild(btn); 
+    btn.onclick=()=>{
+        btn.remove(); 
+        setupAudio(); 
+        sound("level"); 
+        gameRunning=true; 
+        load(1); 
+        requestAnimationFrame(loop);
+    };
+</script>
+</body>
+</html>
 """
 
 st.markdown('<div class="cab">', unsafe_allow_html=True)
 components.html(game_html, height=520, scrolling=False)
 st.markdown("</div>", unsafe_allow_html=True)
+

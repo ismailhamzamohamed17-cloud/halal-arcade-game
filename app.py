@@ -29,7 +29,7 @@ st.markdown("""<style>
     }
 </style>""", unsafe_allow_html=True)
 
-st.markdown('<div class="bn"><b>🕹️ FOUR-QUADRANT SWIPE STEERING ACTIVE</b><br>Simply tap or click near the top, bottom, left, or right edges of the canvas screen to navigate Pac-Man instantly. No buttons needed.</div>', unsafe_allow_html=True)
+st.markdown('<div class="bn"><b>🕹️ AUDIO MODULE & TOUCH STEERING ACTIVE</b><br>Simply tap or click near the top, bottom, left, or right edges of the canvas screen to navigate Pac-Man instantly. Built-in retro sound engine active.</div>', unsafe_allow_html=True)
 
 game_html = """
 <!DOCTYPE html><html><head>
@@ -93,23 +93,55 @@ game_html = """
             });
         }
     }
+    let audioCtx = null;
+    function setupAudio() {
+        if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    }
+
+    // --- 🔊 ADVANCED REAL-TIME COMBAT AUDIO SYNTHESIZERS ---
+    function sound(type) {
+        setupAudio(); if (!audioCtx) return;
+        let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
+        osc.connect(gain); gain.connect(audioCtx.destination);
+        
+        if (type === "waka") { // High-pitched sharp retro popping sound wave
+            osc.type = "triangle";
+            osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+            osc.frequency.linearRampToValueAtTime(750, audioCtx.currentTime + 0.06);
+            gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.06);
+        } else if (type === "lose") { // Heavy descending caught siren pitch drop
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(380, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.35);
+            gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.35);
+        } else if (type === "boom") { // Crashing oscillator explosion wave
+            osc.type = "sawtooth";
+            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.5);
+            gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.5);
+        } else if (type === "level") { // Level progression confirmation chime
+            osc.type = "sine";
+            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
+            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+            gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
+            osc.start(); osc.stop(audioCtx.currentTime + 0.35);
+        }
+    }
+
     function handleScreenInput(clientX, clientY) {
         let rect = canvas.getBoundingClientRect();
-        let clickX = clientX - rect.left;
-        let clickY = clientY - rect.top;
-        
-        let centerX = rect.width / 2;
-        let centerY = rect.height / 2;
-        
-        let dx = clickX - centerX;
-        let dy = clickY - centerY;
+        let clickX = clientX - rect.left; let clickY = clientY - rect.top;
+        let centerX = rect.width / 2; let centerY = rect.height / 2;
+        let dx = clickX - centerX; let dy = clickY - centerY;
         
         if (Math.abs(dx) > Math.abs(dy)) {
-            if (dx > 0) { p.dx = pSpeed; p.dy = 0; }
-            else { p.dx = -pSpeed; p.dy = 0; }
+            if (dx > 0) { p.dx = pSpeed; p.dy = 0; } else { p.dx = -pSpeed; p.dy = 0; }
         } else {
-            if (dy > 0) { p.dx = 0; p.dy = pSpeed; }
-            else { p.dx = 0; p.dy = -pSpeed; }
+            if (dy > 0) { p.dx = 0; p.dy = pSpeed; } else { p.dx = 0; p.dy = -pSpeed; }
         }
     }
 
@@ -135,6 +167,7 @@ game_html = """
                 
                 if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+4.5){
                     d.v=0; score+=10; scEl.innerText=score;
+                    sound("waka"); // --- TRIGGER HIGH-PITCH RETRO DOT EAT AUDIO CHIRP ---
                     arcadeTickets += 1;
                     localStorage.setItem("arcade_tix_vault", arcadeTickets.toString());
                     tixEl.innerText = arcadeTickets;
@@ -143,6 +176,7 @@ game_html = """
         });
 
         if(!active){
+            sound("level");
             if(stage<10){ alert("🎉 STAGE CLEARED!"); load(stage+1); }
             else{ alert("🏆 CAMPAIGN COMPLETE! YOU ARE THE CHAMPION!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); }
             requestAnimationFrame(loop); return;
@@ -162,19 +196,18 @@ game_html = """
             
             ctx.beginPath();
             let gGrad = ctx.createRadialGradient(g.x+6, g.y+5, 1, g.x+9, g.y+9, g.r);
-            gGrad.addColorStop(0, "#ffffff");
-            gGrad.addColorStop(0.25, g.c);
-            gGrad.addColorStop(0.85, "#150002");
-            gGrad.addColorStop(1, "#000000");
-            
-            ctx.arc(g.x+9, g.y+9, g.r, Math.PI, 0, false);
-            ctx.lineTo(g.x+18, g.y+18); ctx.lineTo(g.x, g.y+18);
-            ctx.fillStyle=gGrad; ctx.fill(); ctx.closePath();
+            gGrad.addColorStop(0, "#ffffff"); gGrad.addColorStop(0.25, g.c); gGrad.addColorStop(0.85, "#150002"); gGrad.addColorStop(1, "#000000");
+            ctx.arc(g.x+9, g.y+9, g.r, Math.PI, 0, false); ctx.lineTo(g.x+18, g.y+18); ctx.lineTo(g.x, g.y+18); ctx.fillStyle=gGrad; ctx.fill(); ctx.closePath();
 
             if(Math.hypot(p.x-(g.x+9),p.y-(g.y+9))<p.r+g.r){
                 lives--; lvEl.innerText=lives;
-                if(lives<=0){ alert("💥 MISSION FAILURE: GAME OVER!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); }
-                else{ alert("💥 CAUGHT BY TRACKER!"); p.x=140; p.y=210; p.dx=0; p.dy=0; load(stage); }
+                if(lives<=0){ 
+                    sound("boom"); // --- TRIGGER CRASHING GAME OVER EXPLOSION ---
+                    alert("💥 MISSION FAILURE: GAME OVER!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); 
+                } else { 
+                    sound("lose"); // --- TRIGGER HEAVY FREQUENCY DROP ON GHOST COLLISION ---
+                    alert("💥 CAUGHT BY TRACKER!"); p.x=140; p.y=210; p.dx=0; p.dy=0; load(stage); 
+                }
             }
         });
 
@@ -182,10 +215,12 @@ game_html = """
     }
 
     const btn=document.createElement("button"); btn.innerText="🟢 RUN ARCADE PRO"; Object.assign(btn.style,{position:"absolute",top:"35%",left:"10%",width:"80%",padding:"15px",fontSize:"18px",fontWeight:"bold",background:"#0284c7",color:"#fff",border:"2px solid #38bdf8",borderRadius:"8px",zIndex:"999"});
-    document.body.appendChild(btn); btn.onclick=()=>{btn.remove();load(1);loop()};
+    document.body.appendChild(btn); btn.onclick=()=>{btn.remove(); setupAudio(); sound("level"); load(1); loop()};
 </script></body></html>
 """
 
 st.markdown('<div class="cab">', unsafe_allow_html=True)
 components.html(game_html, height=440, scrolling=False)
 st.markdown("</div>", unsafe_allow_html=True)
+
+

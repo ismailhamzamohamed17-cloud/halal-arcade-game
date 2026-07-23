@@ -29,7 +29,7 @@ st.markdown("""<style>
     }
 </style>""", unsafe_allow_html=True)
 
-st.markdown('<div class="bn"><b>🕹️ AUDIO MODULE & TOUCH STEERING ACTIVE</b><br>Simply tap or click near the top, bottom, left, or right edges of the canvas screen to navigate Pac-Man instantly. Built-in retro sound engine active.</div>', unsafe_allow_html=True)
+st.markdown('<div class="bn"><b>🕹️ DELTA-TIME ENGINE STABILIZATION ONLINE</b><br>Pac-Man and ghost speeds are now automatically adjusted to match frame rates, running equally fast on both computers and phones!</div>', unsafe_allow_html=True)
 
 game_html = """
 <!DOCTYPE html><html><head>
@@ -57,24 +57,26 @@ game_html = """
 
 <script>
     const canvas=document.getElementById("cv"), ctx=canvas.getContext("2d"), scEl=document.getElementById("sc"), lvEl=document.getElementById("lv"), stgEl=document.getElementById("stg"), tixEl=document.getElementById("tix");
-    let score=0, lives=3, stage=1, dots=[], p={x:140,y:210,dx:0,dy:0,r:10,a:0.2,s:0.02};
+    let score=0, lives=3, stage=1, dots=[], p={x:140,y:210,dx:0,dy:0,r:10,a:0.2,s:0.0015};
     let arcadeTickets = parseInt(localStorage.getItem("arcade_tix_vault") || "0");
     tixEl.innerText = arcadeTickets;
     let ghosts = [];
 
-    const pSpeed = 0.9; 
+    // 🏎️ Time-smoothed base velocity speeds (pixels per millisecond)
+    const pSpeed = 0.07; 
+    let lastTime = 0; // Tracks clock times for delta adjustments
 
     const cfgs={
-        1:{n:"📍 MALE' STREETS", c:"#0284c7", d:"#fbbf24", numG:1, sp:0.22, gen:()=>{for(let i=35;i<=245;i+=52)for(let j=35;j<=245;j+=52)if(!(i==140&&j==210))dots.push({x:i,y:j,v:1})}},
-        2:{n:"📍 HULHUMALE' PHASE 2", c:"#f59e0b", d:"#f43f5e", numG:1, sp:0.28, gen:()=>{for(let i=40;i<=240;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:280-i,v:1})}}},
-        3:{n:"📍 CROSSROADS HARBOR", c:"#10b981", d:"#a855f7", numG:2, sp:0.30, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:140+Math.cos(a)*75,y:140+Math.sin(a)*75,v:1})}},
-        4:{n:"📍 MAAFUSHI LAGOON", c:"#ec4899", d:"#06b6d4", numG:2, sp:0.34, gen:()=>{for(let i=30;i<=250;i+=44)dots.push({x:i,y:140,v:1}),dots.push({x:140,y:i,v:1})}},
-        5:{n:"📍 BANOS ATOLL RESORT", c:"#8b5cf6", d:"#10b981", numG:2, sp:0.38, gen:()=>{for(let i=40;i<=240;i+=50)for(let j=40;j<=240;j+=50)dots.push({x:i,y:j,v:1})}},
-        6:{n:"📍 DHIGURAH SHIPWRECK", c:"#3b82f6", d:"#f97316", numG:3, sp:0.40, gen:()=>{for(let i=30;i<=250;i+=35)dots.push({x:i,y:40,v:1}),dots.push({x:i,y:240,v:1})}},
-        7:{n:"📍 THODDOO FARMLANDS", c:"#22c55e", d:"#eab308", numG:3, sp:0.44, gen:()=>{for(let r=30;r<=110;r+=40)for(let a=0;a<Math.PI*2;a+=Math.PI/3)dots.push({x:140+Math.cos(a)*r,y:140+Math.sin(a)*r,v:1})}},
-        8:{n:"📍 GAN AIRFIELD BASE", c:"#64748b", d:"#ec4899", numG:3, sp:0.48, gen:()=>{for(let i=20;i<=260;i+=30){dots.push({x:i,y:140,v:1})}}},
-        9:{n:"📍 HANIFARU BAY REEF", c:"#06b6d4", d:"#3b82f6", numG:3, sp:0.52, gen:()=>{for(let i=30;i<=250;i+=55)for(let j=30;j<=250;j+=55)dots.push({x:i,y:j,v:1})}},
-        10:{n:"👑 ADDU CITY FINALS", c:"#ef4444", d:"#ffffff", numG:4, sp:0.58, gen:()=>{for(let i=20;i<=260;i+=40)for(let j=20;j<=260;j+=40)dots.push({x:i,y:j,v:1})}}
+        1:{n:"📍 MALE' STREETS", c:"#0284c7", d:"#fbbf24", numG:1, sp:0.015, gen:()=>{for(let i=35;i<=245;i+=52)for(let j=35;j<=245;j+=52)if(!(i==140&&j==210))dots.push({x:i,y:j,v:1})}},
+        2:{n:"📍 HULHUMALE' PHASE 2", c:"#f59e0b", d:"#f43f5e", numG:1, sp:0.018, gen:()=>{for(let i=40;i<=240;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:280-i,v:1})}}},
+        3:{n:"📍 CROSSROADS HARBOR", c:"#10b981", d:"#a855f7", numG:2, sp:0.022, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:140+Math.cos(a)*75,y:140+Math.sin(a)*75,v:1})}},
+        4:{n:"📍 MAAFUSHI LAGOON", c:"#ec4899", d:"#06b6d4", numG:2, sp:0.026, gen:()=>{for(let i=30;i<=250;i+=44)dots.push({x:i,y:140,v:1}),dots.push({x:140,y:i,v:1})}},
+        5:{n:"📍 BANOS ATOLL RESORT", c:"#8b5cf6", d:"#10b981", numG:2, sp:0.030, gen:()=>{for(let i=40;i<=240;i+=50)for(let j=40;j<=240;j+=50)dots.push({x:i,y:j,v:1})}},
+        6:{n:"📍 DHIGURAH SHIPWRECK", c:"#3b82f6", d:"#f97316", numG:3, sp:0.034, gen:()=>{for(let i=30;i<=250;i+=35)dots.push({x:i,y:40,v:1}),dots.push({x:i,y:240,v:1})}},
+        7:{n:"📍 THODDOO FARMLANDS", c:"#22c55e", d:"#eab308", numG:3, sp:0.038, gen:()=>{for(let r=30;r<=110;r+=40)for(let a=0;a<Math.PI*2;a+=Math.PI/3)dots.push({x:140+Math.cos(a)*r,y:140+Math.sin(a)*r,v:1})}},
+        8:{n:"📍 GAN AIRFIELD BASE", c:"#64748b", d:"#ec4899", numG:3, sp:0.042, gen:()=>{for(let i=20;i<=260;i+=30){dots.push({x:i,y:140,v:1})}}},
+        9:{n:"📍 HANIFARU BAY REEF", c:"#06b6d4", d:"#3b82f6", numG:3, sp:0.046, gen:()=>{for(let i=30;i<=250;i+=55)for(let j=30;j<=250;j+=55)dots.push({x:i,y:j,v:1})}},
+        10:{n:"👑 ADDU CITY FINALS", c:"#ef4444", d:"#ffffff", numG:4, sp:0.052, gen:()=>{for(let i=20;i<=260;i+=40)for(let j=20;j<=260;j+=40)dots.push({x:i,y:j,v:1})}}
     };
 
     function load(n){
@@ -89,49 +91,44 @@ game_html = """
                 y: 50 + (i * 30),
                 r: 9,
                 c: colors[i % colors.length],
-                sp: c.sp * (1 + (i * 0.1))
+                sp: c.sp * (1 + (i * 0.12))
             });
         }
     }
+
     let audioCtx = null;
     function setupAudio() {
         if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
     }
 
-    // --- 🔊 ADVANCED REAL-TIME COMBAT AUDIO SYNTHESIZERS ---
     function sound(type) {
         setupAudio(); if (!audioCtx) return;
         let osc = audioCtx.createOscillator(), gain = audioCtx.createGain();
         osc.connect(gain); gain.connect(audioCtx.destination);
         
-        if (type === "waka") { // High-pitched sharp retro popping sound wave
-            osc.type = "triangle";
-            osc.frequency.setValueAtTime(450, audioCtx.currentTime);
+        if (type === "waka") {
+            osc.type = "triangle"; osc.frequency.setValueAtTime(450, audioCtx.currentTime);
             osc.frequency.linearRampToValueAtTime(750, audioCtx.currentTime + 0.06);
             gain.gain.setValueAtTime(0.12, audioCtx.currentTime);
             osc.start(); osc.stop(audioCtx.currentTime + 0.06);
-        } else if (type === "lose") { // Heavy descending caught siren pitch drop
-            osc.type = "sawtooth";
-            osc.frequency.setValueAtTime(380, audioCtx.currentTime);
+        } else if (type === "lose") {
+            osc.type = "sawtooth"; osc.frequency.setValueAtTime(380, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.35);
             gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
             osc.start(); osc.stop(audioCtx.currentTime + 0.35);
-        } else if (type === "boom") { // Crashing oscillator explosion wave
-            osc.type = "sawtooth";
-            osc.frequency.setValueAtTime(100, audioCtx.currentTime);
+        } else if (type === "boom") {
+            osc.type = "sawtooth"; osc.frequency.setValueAtTime(100, audioCtx.currentTime);
             osc.frequency.exponentialRampToValueAtTime(20, audioCtx.currentTime + 0.5);
             gain.gain.setValueAtTime(0.4, audioCtx.currentTime);
             osc.start(); osc.stop(audioCtx.currentTime + 0.5);
-        } else if (type === "level") { // Level progression confirmation chime
-            osc.type = "sine";
-            osc.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
-            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1); // E5
-            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2); // G5
+        } else if (type === "level") {
+            osc.type = "sine"; osc.frequency.setValueAtTime(523.25, audioCtx.currentTime);
+            osc.frequency.setValueAtTime(659.25, audioCtx.currentTime + 0.1);
+            osc.frequency.setValueAtTime(783.99, audioCtx.currentTime + 0.2);
             gain.gain.setValueAtTime(0.2, audioCtx.currentTime);
             osc.start(); osc.stop(audioCtx.currentTime + 0.35);
         }
     }
-
     function handleScreenInput(clientX, clientY) {
         let rect = canvas.getBoundingClientRect();
         let clickX = clientX - rect.left; let clickY = clientY - rect.top;
@@ -153,7 +150,12 @@ game_html = """
         }
     }, { passive: false });
 
-    function loop(){
+    function loop(timestamp){
+        if (!lastTime) lastTime = timestamp;
+        let dt = timestamp - lastTime;
+        if (dt > 60) dt = 60; 
+        lastTime = timestamp;
+
         ctx.clearRect(0,0,280,280); let active=0;
         let c=cfgs[stage];
 
@@ -167,7 +169,7 @@ game_html = """
                 
                 if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+4.5){
                     d.v=0; score+=10; scEl.innerText=score;
-                    sound("waka"); // --- TRIGGER HIGH-PITCH RETRO DOT EAT AUDIO CHIRP ---
+                    sound("waka");
                     arcadeTickets += 1;
                     localStorage.setItem("arcade_tix_vault", arcadeTickets.toString());
                     tixEl.innerText = arcadeTickets;
@@ -177,14 +179,21 @@ game_html = """
 
         if(!active){
             sound("level");
+            lastTime = 0; 
             if(stage<10){ alert("🎉 STAGE CLEARED!"); load(stage+1); }
             else{ alert("🏆 CAMPAIGN COMPLETE! YOU ARE THE CHAMPION!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); }
             requestAnimationFrame(loop); return;
         }
 
-        p.x+=p.dx; p.y+=p.dy; p.x=p.x<p.r?280-p.r:(p.x>280-p.r?p.r:p.x); p.y=p.y<p.r?280-p.r:(p.y>280-p.r?p.r:p.y);
-        p.a+=p.s; if(p.a>0.45||p.a<0.05)p.s=-p.s;
+        p.x += p.dx * dt; 
+        p.y += p.dy * dt; 
+        p.x = p.x < p.r ? 280 - p.r : (p.x > 280 - p.r ? p.r : p.x); 
+        p.y = p.y < p.r ? 280 - p.r : (p.y > 280 - p.r ? p.r : p.y);
+        
+        p.a += p.s * dt; 
+        if(p.a > 0.45 || p.a < 0.05) p.s = -p.s;
 
+        // Render 3D Pacman
         ctx.beginPath();
         let pGrad = ctx.createRadialGradient(p.x-3.5, p.y-3.5, 1.5, p.x, p.y, p.r);
         pGrad.addColorStop(0, "#ffffff"); pGrad.addColorStop(0.2, "#facc15"); pGrad.addColorStop(0.7, "#ca8a04"); pGrad.addColorStop(1, "#1e1b4b"); 
@@ -192,7 +201,8 @@ game_html = """
         ctx.arc(p.x,p.y,p.r,rot+p.a,rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
 
         ghosts.forEach(g => {
-            if(g.x<p.x)g.x+=g.sp;else g.x-=g.sp; if(g.y<p.y)g.y+=g.sp;else g.y-=g.sp;
+            if(g.x < p.x) g.x += g.sp * dt; else g.x -= g.sp * dt; 
+            if(g.y < p.y) g.y += g.sp * dt; else g.y -= g.sp * dt;
             
             ctx.beginPath();
             let gGrad = ctx.createRadialGradient(g.x+6, g.y+5, 1, g.x+9, g.y+9, g.r);
@@ -201,11 +211,12 @@ game_html = """
 
             if(Math.hypot(p.x-(g.x+9),p.y-(g.y+9))<p.r+g.r){
                 lives--; lvEl.innerText=lives;
+                lastTime = 0; 
                 if(lives<=0){ 
-                    sound("boom"); // --- TRIGGER CRASHING GAME OVER EXPLOSION ---
+                    sound("boom");
                     alert("💥 MISSION FAILURE: GAME OVER!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); 
                 } else { 
-                    sound("lose"); // --- TRIGGER HEAVY FREQUENCY DROP ON GHOST COLLISION ---
+                    sound("lose");
                     alert("💥 CAUGHT BY TRACKER!"); p.x=140; p.y=210; p.dx=0; p.dy=0; load(stage); 
                 }
             }
@@ -215,12 +226,10 @@ game_html = """
     }
 
     const btn=document.createElement("button"); btn.innerText="🟢 RUN ARCADE PRO"; Object.assign(btn.style,{position:"absolute",top:"35%",left:"10%",width:"80%",padding:"15px",fontSize:"18px",fontWeight:"bold",background:"#0284c7",color:"#fff",border:"2px solid #38bdf8",borderRadius:"8px",zIndex:"999"});
-    document.body.appendChild(btn); btn.onclick=()=>{btn.remove(); setupAudio(); sound("level"); load(1); loop()};
+    document.body.appendChild(btn); btn.onclick=()=>{btn.remove(); setupAudio(); sound("level"); load(1); requestAnimationFrame(loop)};
 </script></body></html>
 """
 
 st.markdown('<div class="cab">', unsafe_allow_html=True)
 components.html(game_html, height=440, scrolling=False)
 st.markdown("</div>", unsafe_allow_html=True)
-
-

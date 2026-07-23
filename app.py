@@ -88,4 +88,141 @@ st.markdown('<div class="cab">', unsafe_allow_html=True)
 # FIXED: Expanded container bounds dynamically to provide seamless visual breathing room
 st.components.v1.html(game_html, height=580, scrolling=False)
 st.markdown("</div>", unsafe_allow_html=True)
+game_html += '''
+<body>
+    <div id="ticketVault">🎟️ TERMINAL TICKETS: <span id="tix">0</span></div>
+    <div id="ui"><div id="stg">STAGE 1</div><div>🥇 <span id="sc">0</span></div><div>❤️ <span id="lv">3</span></div></div>
+    <canvas id="cv" width="280" height="280"></canvas>
+    
+    <div id="ctl">
+        <div class="e"></div><div class="b" id="u">▲</div><div class="e"></div>
+        <div class="b" id="l">◀</div><div class="e"></div><div class="b" id="r">▶</div>
+        <div class="e"></div><div class="b" id="d">▼</div><div class="e"></div>
+    </div>
+
+    <!-- NATIVE GOOGLE ADSENSE PLACEHOLDER FRAME CONTAINER -->
+    <div class="ad-container-slot">
+        <div style="font-weight:bold;color:#64748b;">ADVERTISEMENT AD BANNER</div>
+        <div style="font-size:8px;color:#475569;">Google AdSense Responsive Unit Slot</div>
+    </div>
+
+<script>
+    const canvas=document.getElementById("cv"), ctx=canvas.getContext("2d"), scEl=document.getElementById("sc"), lvEl=document.getElementById("lv"), stgEl=document.getElementById("stg"), tixEl=document.getElementById("tix");
+    let score=0, lives=3, stage=1, dots=[], p={x:140,y:210,dx:0,dy:0,r:10,a:0.2,s:0.02};
+    let arcadeTickets = parseInt(localStorage.getItem("arcade_tix_vault") || "0");
+    tixEl.innerText = arcadeTickets;
+
+    // Ghost array matrix supporting dynamic multispawn scaling
+    let ghosts = [];
+
+    // --- 🔟 COMPLETE 10-STAGE REGIONAL PROGRESSION MATRIX MAPS ---
+    const cfgs={
+        1:{n:"📍 MALE' STREETS", c:"#0284c7", d:"#fbbf24", numG:1, sp:0.25, gen:()=>{for(let i=35;i<=245;i+=52)for(let j=35;j<=245;j+=52)if(!(i==140&&j==210))dots.push({x:i,y:j,v:1})}},
+        2:{n:"📍 HULHUMALE' PHASE 2", c:"#f59e0b", d:"#f43f5e", numG:1, sp:0.32, gen:()=>{for(let i=40;i<=240;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:280-i,v:1})}}},
+        3:{n:"📍 CROSSROADS HARBOR", c:"#10b981", d:"#a855f7", numG:2, sp:0.35, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:140+Math.cos(a)*75,y:140+Math.sin(a)*75,v:1})}},
+        4:{n:"📍 MAAFUSHI LAGOON", c:#ec4899, d:#06b6d4, numG:2, sp:0.38, gen:()=>{for(let i=30;i<=250;i+=44)dots.push({x:i,y:140,v:1}),dots.push({x:140,y:i,v:1})}},
+        5:{n:"📍 BANOS ATOLL RESORT", c:#8b5cf6, d:#10b981, numG:2, sp:0.42, gen:()=>{for(let i=40;i<=240;i+=50)for(let j=40;j<=240;j+=50)dots.push({x:i,y:j,v:1})}},
+        6:{n:"📍 DHIGURAH SHIPWRECK", c:#3b82f6, d:#f97316, numG:3, sp:0.45, gen:()=>{for(let i=30;i<=250;i+=35)dots.push({x:i,y:40,v:1}),dots.push({x:i,y:240,v:1})}},
+        7:{n:"📍 THODDOO FARMLANDS", c:#22c55e, d:#eab308, numG:3, sp:0.48, gen:()=>{for(let r=30;r<=110;r+=40)for(let a=0;a<Math.PI*2;a+=Math.PI/3)dots.push({x:140+Math.cos(a)*r,y:140+Math.sin(a)*r,v:1})}},
+        8:{n:"📍 GAN AIRFIELD BASE", c:#64748b, d:#ec4899, numG:3, sp:0.52, gen:()=>{for(let i=20;i<=260;i+=30){dots.push({x:i,y:140,v:1})}}},
+        9:{n:"📍 HANIFARU BAY REEF", c:#06b6d4, d:#3b82f6, numG:3, sp:0.56, gen:()=>{for(let i=30;i<=250;i+=55)for(let j=30;j<=250;j+=55)dots.push({x:i,y:j,v:1})}},
+        10:{n:"👑 ADDU CITY FINALS", c:#ef4444, d:#ffffff, numG:4, sp:0.62, gen:()=>{for(let i=20;i<=260;i+=40)for(let j=20;j<=260;j+=40)dots.push({x:i,y:j,v:1})}}
+    };
+'''
+game_html += '''
+    function load(n){
+        stage=n; let c=cfgs[n]; stgEl.innerText=c.n; canvas.style.borderColor=c.c;
+        p.x=140; p.y=210; p.dx=0; p.dy=0; dots=[]; c.gen();
+        
+        // --- MULTISPAWN MATRIX CONFIGURATIONS BASED ON ACTIVE CHAPTER LEVEL ---
+        ghosts = [];
+        const colors = ["#ef4444", "#a855f7", "#3b82f6", "#10b981"];
+        for(let i=0; i<c.numG; i++) {
+            ghosts.push({
+                x: 60 + (i * 50),
+                y: 50 + (i * 20),
+                sz: 18,
+                c: colors[i % colors.length],
+                sp: c.sp * (1 + (i * 0.08)) // Every duplicate ghost spawns slightly faster
+            });
+        }
+    }
+
+    function move(d){
+        if(d=='U'){p.dx=0;p.dy=-1.4} if(d=='D'){p.dx=0;p.dy=1.4} if(d=='L'){p.dx=-1.4;p.dy=0} if(d=='R'){p.dx=1.4;p.dy=0}
+    }
+    const bind=(id,d)=>{let el=document.getElementById(id);el.addEventListener("touchstart",(e)=>{e.preventDefault();move(d)});el.addEventListener("mousedown",()=>move(d))};
+    bind("u","U"); bind("d","D"); bind("l","L"); bind("r","R");
+
+    function loop(){
+        ctx.clearRect(0,0,280,280); let active=0;
+        let c=cfgs[stage];
+
+        // --- PSEUDO-3D DROPPED SPHERE CANVAS GRAPHICS RENDER ---
+        dots.forEach(d=>{
+            if(d.v){
+                active++;
+                // Layered radial sphere drop drawing
+                ctx.beginPath();
+                let grad = ctx.createRadialGradient(d.x-1, d.y-1, 1, d.x, d.y, 4);
+                grad.addColorStop(0, "#fff"); grad.addColorStop(0.3, c.d); grad.addColorStop(1, "#000");
+                ctx.arc(d.x,d.y,4,0,Math.PI*2); ctx.fillStyle=grad; ctx.fill(); ctx.closePath();
+                
+                if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+4){
+                    d.v=0; score+=10; scEl.innerText=score;
+                    // Add token value safely into storage arrays
+                    arcadeTickets += 1;
+                    localStorage.setItem("arcade_tix_vault", arcadeTickets.toString());
+                    tixEl.innerText = arcadeTickets;
+                }
+            }
+        });
+
+        // Level Clear gates
+        if(!active){
+            if(stage<10){ alert("🎉 STAGE CLEARED!"); load(stage+1); }
+            else{ alert("🏆 CAMPAIGN COMPLETE! YOU ARE THE ARCADE CHAMPION!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); }
+            requestAnimationFrame(loop); return;
+        }
+
+        p.x+=p.dx; p.y+=p.dy; p.x=p.x<p.r?280-p.r:(p.x>280-p.r?p.r:p.x); p.y=p.y<p.r?280-p.r:(p.y>280-p.r?p.r:p.y);
+        p.a+=p.s; if(p.a>0.45||p.a<0.05)p.s=-p.s;
+
+        // --- PSEUDO-3D HERO CHASSIS DISK GENERATOR ---
+        ctx.beginPath();
+        let pGrad = ctx.createRadialGradient(p.x-3, p.y-3, 2, p.x, p.y, p.r);
+        pGrad.addColorStop(0, "#fffdba"); pGrad.addColorStop(0.4, "#eab308"); pGrad.addColorStop(1, "#854d0e");
+        let rot=p.dx>0?0:(p.dx<0?Math.PI:(p.dy>0?Math.PI/2:(p.dy<0?Math.PI*1.5:0)));
+        ctx.arc(p.x,p.y,p.r,rot+p.a,rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
+
+        // --- MULTIPLE ENEMY BEHAVIOR PHYSICS LOOP ---
+        ghosts.forEach(g => {
+            if(g.x<p.x)g.x+=g.sp;else g.x-=g.sp; if(g.y<p.y)g.y+=g.sp;else g.y-=g.sp;
+            
+            // Render shaded ghost body canvas profile
+            ctx.beginPath();
+            let gGrad = ctx.createRadialGradient(g.x+4, g.y+4, 2, g.x+9, g.y+9, 9);
+            gGrad.addColorStop(0, "#ffffff"); gGrad.addColorStop(0.3, g.c); gGrad.addColorStop(1, "#310000");
+            ctx.arc(g.x+9,g.y+9,9,Math.PI,0,false); ctx.lineTo(g.x+18,g.y+18); ctx.lineTo(g.x,g.y+18); ctx.fillStyle=gGrad; ctx.fill(); ctx.closePath();
+
+            // Collision check matrices
+            if(Math.hypot(p.x-(g.x+9),p.y-(g.y+9))<p.r+9){
+                lives--; lvEl.innerText=lives;
+                if(lives<=0){ alert("💥 MISSION FAILURE: GAME OVER!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); }
+                else{ alert("💥 CAUGHT BY TRACKER!"); p.x=140; p.y=210; p.dx=0; p.dy=0; g.x=140; g.y=35; }
+            }
+        });
+
+        requestAnimationFrame(loop);
+    }
+
+    const btn=document.createElement("button"); btn.innerText="🟢 RUN ARCADE PRO"; Object.assign(btn.style,{position:"absolute",top:"35%",left:"10%",width:"80%",padding:"15px",fontSize:"18px",fontWeight:"bold",background:"#0284c7",color:"#fff",border:"2px solid #38bdf8",borderRadius:"8px",zIndex:"999"});
+    document.body.appendChild(btn); btn.onclick=()=>{btn.remove();sound("level");load(1);loop()};
+</script></body></html>
+'''
+
+st.markdown('<div class="cab">', unsafe_allow_html=True)
+components.html(game_html, height=620, scrolling=False)
+st.markdown("</div>", unsafe_allow_html=True)
+
 

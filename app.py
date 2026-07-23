@@ -132,12 +132,14 @@ game_html = """
         p.x=180; p.y=260; p.dx=0; p.dy=0; dots=[]; c.gen();
         
         ghosts = [];
-        // Rival hunters assign custom color values to clear standard ghost assets out completely
         const targetHunterColors = ["#ef4444", "#a855f7", "#06b6d4", "#f59e0b"];
         for(let i=0; i<c.numG; i++) {
             ghosts.push({
-                x: 60 + (i * 65), y: 60 + (i * 45), r: 13, a: 0.2, s: 0.0015, dx: -1, dy: 0,
-                c: targetHunterColors[i % targetHunterColors.length], sp: c.sp * (1 + (i * 0.12))
+                x: 70 + (i * 60), 
+                y: 60 + (i * 50), 
+                r: 13, a: 0.2, s: 0.0015, dx: -1, dy: 0,
+                c: targetHunterColors[i % targetHunterColors.length], 
+                sp: c.sp * (1 + (i * 0.12))
             });
         }
     }
@@ -157,7 +159,7 @@ game_html = """
             osc.start(); osc.stop(audioCtx.currentTime + 0.06);
         } else if (type === "lose") {
             osc.type = "sawtooth"; osc.frequency.setValueAtTime(350, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.35);
+            osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.35);
             gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
             osc.start(); osc.stop(audioCtx.currentTime + 0.35);
         } else if (type === "boom") {
@@ -216,19 +218,17 @@ game_html = """
         ctx.clearRect(0,0,360,360); let active=0;
         let c=cfgs[stage];
 
-        // --- 🥥 DYNAMIC 3D GRADIENT SHADED GREEN COCONUTS DROP SYSTEM ---
+        // --- 🥥 3D GREEN COCONUT DOT RENDER PIPELINE ---
         dots.forEach(d=>{
             if(d.v){
                 active++;
                 ctx.beginPath();
-                // Core outer husk shell layer
                 let dotGrad = ctx.createRadialGradient(d.x-1.5, d.y-1.5, 0.5, d.x, d.y, 6);
-                dotGrad.addColorStop(0, "#a7f3d0"); // Gloss shine highlight node
-                dotGrad.addColorStop(0.4, "#10b981"); // Main tropical green rind
-                dotGrad.addColorStop(1, "#064e3b"); // Shadows base
+                dotGrad.addColorStop(0, "#a7f3d0"); 
+                dotGrad.addColorStop(0.4, "#10b981"); 
+                dotGrad.addColorStop(1, "#064e3b"); 
                 ctx.arc(d.x, d.y, 6, 0, Math.PI*2); ctx.fillStyle=dotGrad; ctx.fill(); ctx.closePath();
                 
-                // Small stem cap knot detail tracking points
                 ctx.beginPath(); ctx.arc(d.x, d.y-4, 1.5, 0, Math.PI*2); ctx.fillStyle="#047857"; ctx.fill(); ctx.closePath();
                 
                 if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+6){
@@ -250,39 +250,40 @@ game_html = """
         p.y = p.y < p.r ? 360 - p.r : (p.y > 360 - p.r ? p.r : p.y);
         p.a += p.s * dt; if(p.a > 0.45 || p.a < 0.05) p.s = -p.s;
 
-        // --- 🥥 TRUE 3D RENDER: BRIGHT SHADED BROWN COCONUT HUNTER HERO ---
+        // --- 🥥 3D SHADED COCONUT HERO DISK MAPPING ---
         ctx.beginPath();
         let pGrad = ctx.createRadialGradient(p.x-4, p.y-4, 2, p.x, p.y, p.r);
-        pGrad.addColorStop(0, "#ffedd5"); // Specular outer light point reflectivity
-        pGrad.addColorStop(0.3, "#b45309"); // Rich husk amber brown core color
-        pGrad.addColorStop(0.8, "#78350f"); // Shadow line contours
-        pGrad.addColorStop(1, "#451a03"); // Deep textured rim edge shadow drops
+        pGrad.addColorStop(0, "#ffedd5"); 
+        pGrad.addColorStop(0.3, "#b45309"); 
+        pGrad.addColorStop(0.8, "#78350f"); 
+        pGrad.addColorStop(1, "#451a03"); 
         let rot=p.dx>0?0:(p.dx<0?Math.PI:(p.dy>0?Math.PI/2:(p.dy<0?Math.PI*1.5:0)));
         ctx.arc(p.x, p.y, p.r, rot+p.a, rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
 
-        // Distinct textured inner circle segment layer to mimic a cracked white interior shell piece
         ctx.beginPath(); ctx.arc(p.x + (Math.cos(rot)*2), p.y + (Math.sin(rot)*2), p.r - 4, rot+p.a, rot+Math.PI*2-p.a); ctx.strokeStyle="rgba(255,255,255,0.15)"; ctx.lineWidth=1.5; ctx.stroke(); ctx.closePath();
 
-        // --- 🏃 RIVAL COCONUT HUNTERS (3D SHADED MOUTH-CHOMPERS IN UNIQUE NEON TONES) ---
+        // --- 🏃 RIVAL COCONUT HUNTERS TRACKING ENGINE MESH ---
         ghosts.forEach(g => {
-            // Self-directing logic tracking target destination coordinates
-            if(g.x < p.x) { g.x += g.sp * dt; g.dx = 1; g.dy = 0; } else { g.x -= g.sp * dt; g.dx = -1; g.dy = 0; }
+            if(g.x < p.x) { g.x += g.sp * dt; g.dx = 1; } else { g.x -= g.sp * dt; g.dx = -1; }
             if(g.y < p.y) { g.y += g.sp * dt; g.dy = 1; } else { g.y -= g.sp * dt; g.dy = -1; }
             
             g.a += g.s * dt; if(g.a > 0.45 || g.a < 0.05) g.s = -g.s;
 
-            // Render matching structural 3D sphere disk profile for competitive hunters
             ctx.beginPath();
-            let gGrad = ctx.createRadialGradient(g.x-3, g.y-3, 2, g.x, g.y, g.r);
-            gGrad.addColorStop(0, "#ffffff");
-            gGrad.addColorStop(0.25, g.c); // Neon profile color mapping injected seamlessly
-            gGrad.addColorStop(0.8, "#18001c");
+            let gGrad = ctx.createRadialGradient(g.x-4, g.y-4, 2, g.x, g.y, g.r);
+            gGrad.addColorStop(0, "#ffffff"); 
+            gGrad.addColorStop(0.3, g.c);    
+            gGrad.addColorStop(0.8, "#15001a");
             gGrad.addColorStop(1, "#000000");
             
-            let gRot = g.dx > 0 ? 0 : (g.dx < 0 ? Math.PI : (g.dy > 0 ? Math.PI/2 : (g.dy < 0 ? Math.PI*1.5 : 0)));
+            let gRot = g.dx > 0 ? 0 : (g.dx < 0 ? Math.PI : (g.dy > 0 ? Math.PI/2 : 0));
             ctx.arc(g.x, g.y, g.r, gRot+g.a, gRot+Math.PI*2-g.a); ctx.lineTo(g.x, g.y); ctx.fillStyle=gGrad; ctx.fill(); ctx.closePath();
 
-            // Collision evaluation parameters
+            ctx.beginPath(); ctx.arc(g.x - 3, g.y - 3, 2.5, 0, Math.PI*2); ctx.fillStyle="#fff"; ctx.fill(); ctx.closePath();
+            ctx.beginPath(); ctx.arc(g.x + 3, g.y - 3, 2.5, 0, Math.PI*2); ctx.fillStyle="#fff"; ctx.fill(); ctx.closePath();
+            ctx.beginPath(); ctx.arc(g.x - 3, g.y - 3, 1, 0, Math.PI*2); ctx.fillStyle="#000"; ctx.fill(); ctx.closePath();
+            ctx.beginPath(); ctx.arc(g.x + 3, g.y - 3, 1, 0, Math.PI*2); ctx.fillStyle="#000"; ctx.fill(); ctx.closePath();
+
             if(Math.hypot(p.x-g.x, p.y-g.y) < p.r+g.r){
                 lives--; lvEl.innerText=lives;
                 if(lives<=0){ 
@@ -298,7 +299,7 @@ game_html = """
         if (gameRunning) requestAnimationFrame(loop);
     }
 
-    const btn=document.createElement("button"); btn.innerText="🥥 LAUNCH COCONUT HUNTER PRO"; Object.assign(btn.style,{position:"absolute",top:"35%",left:"5%",width:"80%",padding:"15px",fontSize:"15px",fontWeight:"bold",background:#059669,color:#fff,border:"2px solid #34d399",borderRadius:"8px",zIndex:"999",fontFamily:"monospace"});
+    const btn=document.createElement("button"); btn.innerText="🥥 LAUNCH COCONUT HUNTER PRO"; Object.assign(btn.style,{position:"absolute",top:"35%",left:"5%",width:"90%",padding:"15px",fontSize:"15px",fontWeight:"bold",background:"#059669",color:"#fff",border:"2px solid #34d399",borderRadius:"8px",zIndex:"999",fontFamily:"monospace"});
     document.body.appendChild(btn); btn.onclick=()=>{btn.remove(); setupAudio(); sound("level"); gameRunning=true; load(1); requestAnimationFrame(loop)};
 </script></body></html>
 """

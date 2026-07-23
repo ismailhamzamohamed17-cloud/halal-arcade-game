@@ -99,8 +99,8 @@ game_html = """
         4:{n:"📍 MAAFUSHI COASTS", c:"#f43f5e", d:"#78350f", numG:2, sp:0.028, bgMode:"sunset", gen:()=>{for(let i=35;i<=325;i+=40)dots.push({x:i,y:180,v:1}),dots.push({x:180,y:i,v:1})}},
         5:{n:"📍 BANOS SAND BAR", c:"#f43f5e", d:"#78350f", numG:2, sp:0.032, bgMode:"sunset", gen:()=>{for(let i=45;i<=315;i+=45)for(let j=45;j<=315;j+=45)dots.push({x:i,y:j,v:1})}},
         6:{n:"📍 DHIGURAH REEF", c:"#a855f7", d:"#78350f", numG:3, sp:0.036, bgMode:"reef", gen:()=>{for(let i=35;i<=325;i+=35)dots.push({x:i,y:55,v:1}),dots.push({x:i,y:305,v:1})}},
-        7:{n:"📍 THODDOO FARMS", c:"#a855f7", d:"#78350f", numG:3, sp:0.040, bgMode:"reef", gen:()=>{for(let r=45;r<=135;r+=45)for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
-        8:{n:"📍 GAN BASE REEFS", c:"#a855f7", d:"#78350f", numG:3, sp:0.044, bgMode:"reef", gen:()=>{for(let i=30;i<=330;i+=30){dots.push({x:i,y:180,v:1});dots.push({x:i,y:90,v:1});dots.push({x:i,y:270,v:1})}}},
+        7:{n:"📍 THODDOO FARMS", c:"#a855f7", d:"#78350f", numG:3, sp:0.040, gen:()=>{for(let r=45;r<=135;r+=45)for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
+        8:{n:"📍 GAN BASE REEFS", c:"#a855f7", d:"#78350f", numG:3, sp:0.044, bgMode:"reef", gen:()=>{for(let i=30;i<=330;i+=30){dots.push({x:i,y:180,v:1};dots.push({x:i,y:90,v:1});dots.push({x:i,y:270,v:1})}}},
         9:{n:"📍 HANIFARU OCEAN WAY", c:"#a855f7", d:"#78350f", numG:3, sp:0.048, bgMode:"reef", gen:()=>{for(let i=45;i<=315;i+=54)for(let j=45;j<=315;j+=54)dots.push({x:i,y:j,v:1})}},
         10:{n:"👑 ADDU FINALS PRO", c:"#00ff66", d:"#ffffff", numG:4, sp:0.054, bgMode:"city", gen:()=>{for(let i=30;i<=330;i+=42)for(let j=30;j<=330;j+=42)dots.push({x:i,y:j,v:1})}}
     };
@@ -167,16 +167,14 @@ game_html = """
         p.x += p.dx * dt; p.y += p.dy * dt; p.x = p.x < p.r ? 360 - p.r : (p.x > 360 - p.r ? p.r : p.x); p.y = p.y < p.r ? 360 - p.r : (p.y > 360 - p.r ? p.r : p.y);
         p.a += p.s * dt; if(p.a > 0.45 || p.a < 0.05) p.s = -p.s;
 
-        // Render 3D Shaded Coconut
-        ctx.beginPath(); let pGrad = ctx.createRadialGradient(p.x-4, p.y-4, 2, p.x, p.y, p.r); pGrad.addColorStop(0, "#ffedd5"); pGrad.addColorStop(0.3, #b45309); pGrad.addColorStop(0.8, #78350f); pGrad.addColorStop(1, "#451a03"); 
+        // FIXED: Wrapped hex strings cleanly in double quotes to prevent string breaking
+        ctx.beginPath(); let pGrad = ctx.createRadialGradient(p.x-4, p.y-4, 2, p.x, p.y, p.r); pGrad.addColorStop(0, "#ffedd5"); pGrad.addColorStop(0.3, "#b45309"); pGrad.addColorStop(0.8, "#78350f"); pGrad.addColorStop(1, "#451a03"); 
         let rot=p.dx>0?0:(p.dx<0?Math.PI:(p.dy>0?Math.PI/2:(p.dy<0?Math.PI*1.5:0))); ctx.arc(p.x, p.y, p.r, rot+p.a, rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
 
-        // Sleek Minimal Horizontal Slot Eye
         let eyeAngle = rot + 0.35; let pEyeX = p.x + Math.cos(eyeAngle) * 5.5; let pEyeY = p.y + Math.sin(eyeAngle) * 5.5;
         ctx.strokeStyle = "rgba(28, 7, 0, 0.7)"; ctx.lineWidth = 2.5; ctx.lineCap = "round"; ctx.beginPath(); ctx.moveTo(pEyeX - 3.5, pEyeY); ctx.lineTo(pEyeX + 3.5, pEyeY); ctx.stroke(); ctx.closePath();
         ctx.beginPath(); ctx.arc(pEyeX, pEyeY, 1.4, 0, Math.PI*2); ctx.fillStyle = "#000000"; ctx.fill(); ctx.closePath();
 
-        // Render Rivals
         ghosts.forEach(g => {
             if(g.x < p.x) { g.x += g.sp * dt; g.dx = 1; } else { g.x -= g.sp * dt; g.dx = -1; } if(g.y < p.y) { g.y += g.sp * dt; g.dy = 1; } else { g.y -= g.sp * dt; g.dy = -1; }
             g.a += g.s * dt; if(g.a > 0.45 || g.a < 0.05) g.s = -g.s;

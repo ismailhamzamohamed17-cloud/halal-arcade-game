@@ -34,7 +34,7 @@ st.markdown("""<style>
     }
 </style>""", unsafe_allow_html=True)
 
-st.markdown('<div class="bn"><b>🥥 COCONUT HUNTER: ORIGINAL IP MODE</b><br>Pac-Man transformed into a 3D Shaded Coconut! Food points are now green coconuts. Rival hunters occupy the board tracking your movements.</div>', unsafe_allow_html=True)
+st.markdown('<div class="bn"><b>🥥 COCONUT HUNTER: ISLAND EXPEDITION ACTIVE</b><br>Characters updated with single tactical side-eyes. Food dots transformed into authentic brown coconuts with shell pores. Empty void replaced with lush jungle paths!</div>', unsafe_allow_html=True)
 
 game_html = """
 <!DOCTYPE html><html><head>
@@ -43,10 +43,11 @@ game_html = """
     body { background:#030712; margin:0; padding:4px; display:flex; flex-direction:column; align-items:center; font-family:monospace; user-select:none; -webkit-user-select:none; }
     
     #arenaWrapper { position: relative; width: 360px; height: 360px; }
-    canvas { border:3px solid #059669; background:#020617; border-radius:12px; width:360px; height:360px; box-shadow: 0 12px 35px rgba(0,0,0,0.7); touch-action: none; cursor: crosshair; }
+    /* FIXED: Background color shifted to a dense tropical rainforest shade to break the black void appearance */
+    canvas { border:3px solid #15803d; background:#052e16; border-radius:12px; width:360px; height:360px; box-shadow: 0 12px 35px rgba(0,0,0,0.7); touch-action: none; cursor: crosshair; }
     
     #ui { color:#fff; font-size:14px; font-weight:bold; width:360px; display:flex; justify-content:space-between; margin:6px 0; letter-spacing:0.5px; }
-    #ticketVault { color: #10b981; font-size:13px; font-weight:bold; width:360px; text-align:left; margin-bottom:4px; }
+    #ticketVault { color: #22c55e; font-size:13px; font-weight:bold; width:360px; text-align:left; margin-bottom:4px; }
     
     .msg-overlay { 
         position: absolute; inset: 0; background: rgba(2, 6, 23, 0.94); border-radius: 12px; 
@@ -55,9 +56,9 @@ game_html = """
     .msg-title { font-size: 26px; font-weight: bold; margin-bottom: 8px; font-family: sans-serif; letter-spacing: 1px; }
     .msg-btn { margin-top: 15px; padding: 10px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; font-family: monospace; }
     
-    .overlay-clear { color: #10b981; text-shadow: 0 0 10px rgba(16,185,129,0.4); }
+    .overlay-clear { color: #22c55e; text-shadow: 0 0 10px rgba(34,197,94,0.4); }
     .overlay-fail { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.4); }
-    .overlay-win { color: #f59e0b; text-shadow: 0 0 12px rgba(245,158,11,0.5); }
+    .overlay-win { color: #eab308; text-shadow: 0 0 12px rgba(234,179,8,0.5); }
     .overlay-warn { color: #f59e0b; text-shadow: 0 0 10px rgba(245,158,11,0.4); }
 
     .ad-container-slot {
@@ -74,8 +75,8 @@ game_html = """
         
         <div id="clearScreen" class="msg-overlay">
             <div class="msg-title overlay-clear">STAGE CLEARED! 🌴</div>
-            <div style="color:#94a3b8;font-size:12px;">Islands routes secured. Prepare for next checkpoint.</div>
-            <button class="msg-btn" style="background:#10b981;color:#000;" onclick="confirmAdvance()">NEXT ISLAND ➡️</button>
+            <div style="color:#94a3b8;font-size:12px;">Island routes secured. Prepare for next checkpoint.</div>
+            <button class="msg-btn" style="background:#22c55e;color:#000;" onclick="confirmAdvance()">NEXT ISLAND ➡️</button>
         </div>
 
         <div id="caughtScreen" class="msg-overlay">
@@ -93,7 +94,7 @@ game_html = """
         <div id="victoryScreen" class="msg-overlay">
             <div class="msg-title overlay-win">GRAND CHAMPION! 👑</div>
             <div style="color:#fff;font-size:13px;font-weight:bold;line-height:1.4;">YOU HARVESTED ALL 10 ISLANDS!<br>You dominate the territorial leaderboard!</div>
-            <button class="msg-btn" style="background:#f59e0b;color:#000;" onclick="confirmRestart()">RESTART CAMPAIGN 🎮</button>
+            <button class="msg-btn" style="background:#eab308;color:#000;" onclick="confirmRestart()">RESTART CAMPAIGN 🎮</button>
         </div>
     </div>
 
@@ -115,16 +116,16 @@ game_html = """
     let lastTime = 0;
 
     const cfgs={
-        1:{n:"🌴 MALE' ATOL ROAD", c:"#0284c7", d:"#10b981", numG:1, sp:0.016, gen:()=>{for(let i=40;i<=320;i+=70)for(let j=40;j<=320;j+=70)if(!(i==180&&j==260))dots.push({x:i,y:j,v:1})}},
-        2:{n:"🌴 HULHUMALE' PLAINS", c:"#f59e0b", d:"#10b981", numG:1, sp:0.020, gen:()=>{for(let i=40;i<=320;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:360-i,v:1})}}},
-        3:{n:"🌴 CROSSROADS LAGOON", c:"#10b981", d:"#10b981", numG:2, sp:0.024, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/5)dots.push({x:180+Math.cos(a)*110,y:180+Math.sin(a)*110,v:1})}},
-        4:{n:"🌴 MAAFUSHI COASTS", c:"#ec4899", d:"#10b981", numG:2, sp:0.028, gen:()=>{for(let i=35;i<=325;i+=40)dots.push({x:i,y:180,v:1}),dots.push({x:180,y:i,v:1})}},
-        5:{n:"🌴 BANOS SAND BAR", c:"#8b5cf6", d:"#10b981", numG:2, sp:0.032, gen:()=>{for(let i=45;i<=315;i+=45)for(let j=45;j<=315;j+=45)dots.push({x:i,y:j,v:1})}},
-        6:{n:"🌴 DHIGURAH REEF BAY", c:"#3b82f6", d:"#10b981", numG:3, sp:0.036, gen:()=>{for(let i=35;i<=325;i+=35)dots.push({x:i,y:55,v:1}),dots.push({x:i,y:305,v:1})}},
-        7:{n:"🌴 THODDOO COCONUT GROVE", c:"#22c55e", d:"#10b981", numG:3, sp:0.040, gen:()=>{for(let r=45;r<=135;r+=45)for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
-        8:{n:"🌴 GAN AIRSTRIP GRID", c:"#64748b", d:"#10b981", numG:3, sp:0.044, gen:()=>{for(let i=30;i<=330;i+=30){dots.push({x:i,y:180,v:1});dots.push({x:i,y:90,v:1});dots.push({x:i,y:270,v:1})}}},
-        9:{n:"🌴 HANIFARU OCEAN WAY", c:"#06b6d4", d:"#10b981", numG:3, sp:0.048, gen:()=>{for(let i=45;i<=315;i+=54)for(let j=45;j<=315;j+=54)dots.push({x:i,y:j,v:1})}},
-        10:{n:"👑 ADDU FINALS", c:"#ef4444", d:"#10b981", numG:4, sp:0.054, gen:()=>{for(let i=30;i<=330;i+=42)for(let j=30;j<=330;j+=42)dots.push({x:i,y:j,v:1})}}
+        1:{n:"🌴 MALE' ATOL ROAD", c:"#0284c7", d:"#854d0e", numG:1, sp:0.016, gen:()=>{for(let i=40;i<=320;i+=70)for(let j=40;j<=320;j+=70)if(!(i==180&&j==260))dots.push({x:i,y:j,v:1})}},
+        2:{n:"🌴 HULHUMALE' PLAINS", c:"#f59e0b", d:"#854d0e", numG:1, sp:0.020, gen:()=>{for(let i=40;i<=320;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:360-i,v:1})}}},
+        3:{n:"🌴 CROSSROADS LAGOON", c:"#22c55e", d:"#854d0e", numG:2, sp:0.024, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/5)dots.push({x:180+Math.cos(a)*110,y:180+Math.sin(a)*110,v:1})}},
+        4:{n:"🌴 MAAFUSHI COASTS", c:"#ec4899", d:"#854d0e", numG:2, sp:0.028, gen:()=>{for(let i=35;i<=325;i+=40)dots.push({x:i,y:180,v:1}),dots.push({x:180,y:i,v:1})}},
+        5:{n:"🌴 BANOS SAND BAR", c:"#8b5cf6", d:"#854d0e", numG:2, sp:0.032, gen:()=>{for(let i=45;i<=315;i+=45)for(let j=45;j<=315;j+=45)dots.push({x:i,y:j,v:1})}},
+        6:{n:"🌴 DHIGURAH REEF BAY", c:"#3b82f6", d:"#854d0e", numG:3, sp:0.036, gen:()=>{for(let i=35;i<=325;i+=35)dots.push({x:i,y:55,v:1}),dots.push({x:i,y:305,v:1})}},
+        7:{n:"🌴 THODDOO COCONUT GROVE", c:"#22c55e", d:"#854d0e", numG:3, sp:0.040, gen:()=>{for(let r=45;r<=135;r+=45)for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
+        8:{n:"🌴 GAN AIRSTRIP GRID", c:"#64748b", d:"#854d0e", numG:3, sp:0.044, gen:()=>{for(let i=30;i<=330;i+=30){dots.push({x:i,y:180,v:1});dots.push({x:i,y:90,v:1});dots.push({x:i,y:270,v:1})}}},
+        9:{n:"🌴 HANIFARU OCEAN WAY", c:"#06b6d4", d:"#854d0e", numG:3, sp:0.048, gen:()=>{for(let i=45;i<=315;i+=54)for(let j=45;j<=315;j+=54)dots.push({x:i,y:j,v:1})}},
+        10:{n:"👑 ADDU FINALS", c:"#ef4444", d:"#ffffff", numG:4, sp:0.054, gen:()=>{for(let i=30;i<=330;i+=42)for(let j=30;j<=330;j+=42)dots.push({x:i,y:j,v:1})}}
     };
 
     function load(n){
@@ -132,14 +133,11 @@ game_html = """
         p.x=180; p.y=260; p.dx=0; p.dy=0; dots=[]; c.gen();
         
         ghosts = [];
-        const targetHunterColors = ["#ef4444", "#a855f7", "#06b6d4", "#f59e0b"];
+        const targetHunterColors = ["#ef4444", "#a855f7", "#00f0ff", "#eab308"];
         for(let i=0; i<c.numG; i++) {
             ghosts.push({
-                x: 70 + (i * 60), 
-                y: 60 + (i * 50), 
-                r: 13, a: 0.2, s: 0.0015, dx: -1, dy: 0,
-                c: targetHunterColors[i % targetHunterColors.length], 
-                sp: c.sp * (1 + (i * 0.12))
+                x: 70 + (i * 60), y: 60 + (i * 50), r: 13, a: 0.2, s: 0.0015, dx: -1, dy: 0,
+                c: targetHunterColors[i % targetHunterColors.length], sp: c.sp * (1 + (i * 0.12))
             });
         }
     }
@@ -159,7 +157,7 @@ game_html = """
             osc.start(); osc.stop(audioCtx.currentTime + 0.06);
         } else if (type === "lose") {
             osc.type = "sawtooth"; osc.frequency.setValueAtTime(350, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.35);
+            osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.35);
             gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
             osc.start(); osc.stop(audioCtx.currentTime + 0.35);
         } else if (type === "boom") {
@@ -194,7 +192,7 @@ game_html = """
     canvas.addEventListener("touchstart", (e) => {
         e.preventDefault();
         if(e.touches && e.touches.length > 0) {
-            handleScreenInput(e.touches[0].clientX, e.touches[0].clientY);
+            handleScreenInput(e.touches.clientX, e.touches.clientY);
         }
     }, { passive: false });
 
@@ -215,23 +213,34 @@ game_html = """
         if (!lastTime) lastTime = timestamp;
         let dt = timestamp - lastTime; if (dt > 60) dt = 60; lastTime = timestamp;
 
-        ctx.clearRect(0,0,360,360); let active=0;
+        ctx.clearRect(0,0,360,360);
         let c=cfgs[stage];
 
-        // --- 🥥 3D GREEN COCONUT DOT RENDER PIPELINE ---
+        // --- 🌴 IMMERSIVE BACKGROUND: DEEP JUNGLE CANOPY LEAF MAP PATHS ---
+        ctx.strokeStyle = "rgba(22, 101, 52, 0.25)"; ctx.lineWidth = 4;
+        for(let i=30; i<360; i+=60) {
+            ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 360); ctx.stroke();
+            ctx.beginPath(); ctx.moveTo(0, i); ctx.lineTo(360, i); ctx.stroke();
+        }
+
+        let active=0;
+        // --- 🥥 RENDER DETAILED REALISTIC BROWN COCONUTS WITH TWO GERMINATION PORES ---
         dots.forEach(d=>{
             if(d.v){
                 active++;
                 ctx.beginPath();
-                let dotGrad = ctx.createRadialGradient(d.x-1.5, d.y-1.5, 0.5, d.x, d.y, 6);
-                dotGrad.addColorStop(0, "#a7f3d0"); 
-                dotGrad.addColorStop(0.4, "#10b981"); 
-                dotGrad.addColorStop(1, "#064e3b"); 
-                ctx.arc(d.x, d.y, 6, 0, Math.PI*2); ctx.fillStyle=dotGrad; ctx.fill(); ctx.closePath();
+                // Spherical husk texture layout shading
+                let dotGrad = ctx.createRadialGradient(d.x-1.5, d.y-1.5, 0.5, d.x, d.y, 6.5);
+                dotGrad.addColorStop(0, "#d97706"); // Shell gloss top shine highlight
+                dotGrad.addColorStop(0.4, "#78350f"); // Core brown coconut meat coloring
+                dotGrad.addColorStop(1, "#290b00"); // Base background dropshadow blend
+                ctx.arc(d.x, d.y, 6.5, 0, Math.PI*2); ctx.fillStyle=dotGrad; ctx.fill(); ctx.closePath();
                 
-                ctx.beginPath(); ctx.arc(d.x, d.y-4, 1.5, 0, Math.PI*2); ctx.fillStyle="#047857"; ctx.fill(); ctx.closePath();
+                // FIXED: Embed two precise dark brown germ eyes directly onto the food nodes shell surface
+                ctx.beginPath(); ctx.arc(d.x - 2, d.y + 1, 1.2, 0, Math.PI*2); ctx.fillStyle="#1c0700"; ctx.fill(); ctx.closePath();
+                ctx.beginPath(); ctx.arc(d.x + 2, d.y + 1, 1.2, 0, Math.PI*2); ctx.fillStyle="#1c0700"; ctx.fill(); ctx.closePath();
                 
-                if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+6){
+                if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+6.5){
                     d.v=0; score+=10; scEl.innerText=score; sound("waka");
                     arcadeTickets += 1; localStorage.setItem("arcade_tix_vault", arcadeTickets.toString()); tixEl.innerText = arcadeTickets;
                 }
@@ -240,8 +249,7 @@ game_html = """
 
         if(!active){
             gameRunning = false; sound("level");
-            if(stage < 10){ clearScreen.style.display = "flex"; } 
-            else { victoryScreen.style.display = "flex"; }
+            if(stage < 10){ clearScreen.style.display = "flex"; } else { victoryScreen.style.display = "flex"; }
             return;
         }
 
@@ -250,19 +258,19 @@ game_html = """
         p.y = p.y < p.r ? 360 - p.r : (p.y > 360 - p.r ? p.r : p.y);
         p.a += p.s * dt; if(p.a > 0.45 || p.a < 0.05) p.s = -p.s;
 
-        // --- 🥥 3D SHADED COCONUT HERO DISK MAPPING ---
+        // --- 🥥 3D SHADED COCONUT HERO DISK WITH 1 TACTICAL SIDE-EYE ---
         ctx.beginPath();
         let pGrad = ctx.createRadialGradient(p.x-4, p.y-4, 2, p.x, p.y, p.r);
-        pGrad.addColorStop(0, "#ffedd5"); 
-        pGrad.addColorStop(0.3, "#b45309"); 
-        pGrad.addColorStop(0.8, "#78350f"); 
-        pGrad.addColorStop(1, "#451a03"); 
+        pGrad.addColorStop(0, "#ffedd5"); pGrad.addColorStop(0.3, "#b45309"); pGrad.addColorStop(0.8, "#78350f"); pGrad.addColorStop(1, "#451a03"); 
         let rot=p.dx>0?0:(p.dx<0?Math.PI:(p.dy>0?Math.PI/2:(p.dy<0?Math.PI*1.5:0)));
         ctx.arc(p.x, p.y, p.r, rot+p.a, rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
 
-        ctx.beginPath(); ctx.arc(p.x + (Math.cos(rot)*2), p.y + (Math.sin(rot)*2), p.r - 4, rot+p.a, rot+Math.PI*2-p.a); ctx.strokeStyle="rgba(255,255,255,0.15)"; ctx.lineWidth=1.5; ctx.stroke(); ctx.closePath();
+        // FIXED: Render exactly ONE large, tracking tactical cyclops eye on the hero shell flank mapping
+        let eyeOffsetX = Math.cos(rot + 0.4) * 5; let eyeOffsetY = Math.sin(rot + 0.4) * 5;
+        ctx.beginPath(); ctx.arc(p.x + eyeOffsetX, p.y + eyeOffsetY, 3.5, 0, Math.PI*2); ctx.fillStyle="#fff"; ctx.fill(); ctx.closePath();
+        ctx.beginPath(); ctx.arc(p.x + eyeOffsetX + (Math.cos(rot)*1), p.y + eyeOffsetY + (Math.sin(rot)*1), 1.5, 0, Math.PI*2); ctx.fillStyle="#000"; ctx.fill(); ctx.closePath();
 
-        // --- 🏃 RIVAL COCONUT HUNTERS TRACKING ENGINE MESH ---
+        // --- 🏃 RIVAL COCONUT HUNTERS WITH 1 ALIGNED COMBAT SIDE-EYE ---
         ghosts.forEach(g => {
             if(g.x < p.x) { g.x += g.sp * dt; g.dx = 1; } else { g.x -= g.sp * dt; g.dx = -1; }
             if(g.y < p.y) { g.y += g.sp * dt; g.dy = 1; } else { g.y -= g.sp * dt; g.dy = -1; }
@@ -271,18 +279,14 @@ game_html = """
 
             ctx.beginPath();
             let gGrad = ctx.createRadialGradient(g.x-4, g.y-4, 2, g.x, g.y, g.r);
-            gGrad.addColorStop(0, "#ffffff"); 
-            gGrad.addColorStop(0.3, g.c);    
-            gGrad.addColorStop(0.8, "#15001a");
-            gGrad.addColorStop(1, "#000000");
-            
+            gGrad.addColorStop(0, "#ffffff"); gGrad.addColorStop(0.25, g.c); gGrad.addColorStop(0.8, "#15001a"); gGrad.addColorStop(1, "#000000");
             let gRot = g.dx > 0 ? 0 : (g.dx < 0 ? Math.PI : (g.dy > 0 ? Math.PI/2 : 0));
             ctx.arc(g.x, g.y, g.r, gRot+g.a, gRot+Math.PI*2-g.a); ctx.lineTo(g.x, g.y); ctx.fillStyle=gGrad; ctx.fill(); ctx.closePath();
 
-            ctx.beginPath(); ctx.arc(g.x - 3, g.y - 3, 2.5, 0, Math.PI*2); ctx.fillStyle="#fff"; ctx.fill(); ctx.closePath();
-            ctx.beginPath(); ctx.arc(g.x + 3, g.y - 3, 2.5, 0, Math.PI*2); ctx.fillStyle="#fff"; ctx.fill(); ctx.closePath();
-            ctx.beginPath(); ctx.arc(g.x - 3, g.y - 3, 1, 0, Math.PI*2); ctx.fillStyle="#000"; ctx.fill(); ctx.closePath();
-            ctx.beginPath(); ctx.arc(g.x + 3, g.y - 3, 1, 0, Math.PI*2); ctx.fillStyle="#000"; ctx.fill(); ctx.closePath();
+            // FIXED: Render exactly ONE unified, high-contrast tracking eye onto rival faces
+            let gEyeX = Math.cos(gRot + 0.3) * 4; let gEyeY = Math.sin(gRot + 0.3) * 4;
+            ctx.beginPath(); ctx.arc(g.x + gEyeX, g.y + gEyeY, 3.5, 0, Math.PI*2); ctx.fillStyle="#fff"; ctx.fill(); ctx.closePath();
+            ctx.beginPath(); ctx.arc(g.x + gEyeX, g.y + gEyeY, 1.5, 0, Math.PI*2); ctx.fillStyle="#000"; ctx.fill(); ctx.closePath();
 
             if(Math.hypot(p.x-g.x, p.y-g.y) < p.r+g.r){
                 lives--; lvEl.innerText=lives;
@@ -299,7 +303,7 @@ game_html = """
         if (gameRunning) requestAnimationFrame(loop);
     }
 
-    const btn=document.createElement("button"); btn.innerText="🥥 LAUNCH COCONUT HUNTER PRO"; Object.assign(btn.style,{position:"absolute",top:"35%",left:"5%",width:"90%",padding:"15px",fontSize:"15px",fontWeight:"bold",background:"#059669",color:"#fff",border:"2px solid #34d399",borderRadius:"8px",zIndex:"999",fontFamily:"monospace"});
+    const btn=document.createElement("button"); btn.innerText="🥥 LAUNCH COCONUT HUNTER PRO"; Object.assign(btn.style,{position:"absolute",top:"35%",left:"5%",width:"90%",padding:"15px",fontSize:"15px",fontWeight:"bold",background:"#16a34a",color:"#fff",border:"2px solid #4ade80",borderRadius:"8px",zIndex:"999",fontFamily:"monospace"});
     document.body.appendChild(btn); btn.onclick=()=>{btn.remove(); setupAudio(); sound("level"); gameRunning=true; load(1); requestAnimationFrame(loop)};
 </script></body></html>
 """

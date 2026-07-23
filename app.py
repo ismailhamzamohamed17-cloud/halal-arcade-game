@@ -34,7 +34,7 @@ st.markdown("""<style>
     }
 </style>""", unsafe_allow_html=True)
 
-st.markdown('<div class="bn"><b>🕹️ SCREEN SCALE UP & INTEGRATED MESSAGING PACK</b><br>Canvas expanded to 360px grid dimensions. Pop-ups completely removed; all level messages render smoothly inside the canvas area!</div>', unsafe_allow_html=True)
+st.markdown('<div class="bn"><b>🕹️ 100% INTERNAL OVERLAY MATRIX ENGAGED</b><br>All alert tabs completely eliminated. Standard collision warnings are now cleanly drawn right inside the display card arena layer.</div>', unsafe_allow_html=True)
 
 game_html = """
 <!DOCTYPE html><html><head>
@@ -42,14 +42,13 @@ game_html = """
 <style>
     body { background:#030712; margin:0; padding:4px; display:flex; flex-direction:column; align-items:center; font-family:monospace; user-select:none; -webkit-user-select:none; }
     
-    /* FIXED: Scaled up to 360px frame width to increase your total playing area footprint */
     #arenaWrapper { position: relative; width: 360px; height: 360px; }
     canvas { border:3px solid #0284c7; background:#01040f; border-radius:12px; width:360px; height:360px; box-shadow: 0 12px 30px rgba(0,0,0,0.6); touch-action: none; cursor: crosshair; }
     
     #ui { color:#fff; font-size:14px; font-weight:bold; width:360px; display:flex; justify-content:space-between; margin:6px 0; letter-spacing:0.5px; }
     #ticketVault { color: #22c55e; font-size:13px; font-weight:bold; width:360px; text-align:left; margin-bottom:4px; }
     
-    /* FIXED: Pure inside-game notification state layers completely replacing alert() tabs */
+    /* Dedicated internal notification state overlay layers */
     .msg-overlay { 
         position: absolute; inset: 0; background: rgba(3, 7, 18, 0.92); border-radius: 12px; 
         display: none; flex-direction: column; align-items: center; justify-content: center; z-index: 100; color: #fff; text-align: center; padding: 15px;
@@ -58,11 +57,9 @@ game_html = """
     .msg-btn { margin-top: 15px; padding: 10px 24px; font-size: 14px; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; text-transform: uppercase; font-family: monospace; }
     
     .overlay-clear { color: #22c55e; text-shadow: 0 0 10px rgba(34,197,94,0.4); }
-    .overlay-clear btn { background: #22c55e; color: #000; }
     .overlay-fail { color: #ef4444; text-shadow: 0 0 10px rgba(239,68,68,0.4); }
-    .overlay-fail btn { background: #ef4444; color: #fff; }
     .overlay-win { color: #eab308; text-shadow: 0 0 12px rgba(234,179,8,0.5); }
-    .overlay-win btn { background: #eab308; color: #000; }
+    .overlay-warn { color: #f59e0b; text-shadow: 0 0 10px rgba(245,158,11,0.4); }
 
     .ad-container-slot {
         width: 360px; height: 50px; background: #0f172a; border: 1px dashed #334155;
@@ -76,22 +73,29 @@ game_html = """
     <div id="arenaWrapper">
         <canvas id="cv" width="360" height="360"></canvas>
         
-        <!-- 📑 IN-GAME COMPONENT INTERFACES: ELIMINATED ALL EXSIDE NEW-TAB ALERTS -->
+        <!-- 📑 IN-GAME NOTIFICATION OVERLAY MESH PANEL GRID -->
         <div id="clearScreen" class="msg-overlay">
             <div class="msg-title overlay-clear">STAGE CLEARED! 🎉</div>
             <div style="color:#94a3b8;font-size:12px;">Get ready for the next checkpoint challenge.</div>
             <button class="msg-btn" style="background:#22c55e;color:#000;" onclick="confirmAdvance()">CONTINUE MISSION ➡️</button>
         </div>
 
+        <!-- NEW: Hides window popup alert warnings when losing an arcade shield life -->
+        <div id="caughtScreen" class="msg-overlay">
+            <div class="msg-title overlay-warn">CAUGHT BY GHOST! 💥</div>
+            <div style="color:#94a3b8;font-size:12px;">Resetting position. Be careful, officer!</div>
+            <button class="msg-btn" style="background:#f59e0b;color:#000;" onclick="confirmRespawn()">RESPAWN HERO 🛡️</button>
+        </div>
+
         <div id="failScreen" class="msg-overlay">
-            <div class="msg-title overlay-fail">GAME OVER 💥</div>
+            <div class="msg-title overlay-fail">GAME OVER 💀</div>
             <div id="finalScoreInfo" style="color:#94a3b8;font-size:12px;margin-bottom:5px;">Your final score has been saved.</div>
             <button class="msg-btn" style="background:#ef4444;color:#fff;" onclick="confirmRestart()">RETRY MISSION 🔄</button>
         </div>
 
         <div id="victoryScreen" class="msg-overlay">
             <div class="msg-title overlay-win">CONGRATULATIONS! 🏆</div>
-            <div style="color:#fff;font-size:13px;font-weight:bold;line-height:1.4;">YOU FINISHED THE GAME!<br>You are the Ultimate Arcade Champion!</div>
+            <div style="color:#fff;font-size:13px;font-weight:bold;line-height:1.4;">YOU FINISHED THE GAME!<br>You are the Ultimate尊 Arcade Champion!</div>
             <button class="msg-btn" style="background:#eab308;color:#000;" onclick="confirmRestart()">PLAY AGAIN 🎮</button>
         </div>
     </div>
@@ -103,14 +107,13 @@ game_html = """
 
 <script>
     const canvas=document.getElementById("cv"), ctx=canvas.getContext("2d"), scEl=document.getElementById("sc"), lvEl=document.getElementById("lv"), stgEl=document.getElementById("stg"), tixEl=document.getElementById("tix");
-    const clearScreen=document.getElementById("clearScreen"), failScreen=document.getElementById("failScreen"), victoryScreen=document.getElementById("victoryScreen");
+    const clearScreen=document.getElementById("clearScreen"), failScreen=document.getElementById("failScreen"), victoryScreen=document.getElementById("victoryScreen"), caughtScreen=document.getElementById("caughtScreen");
     
     let score=0, lives=3, stage=1, dots=[], p={x:180,y:260,dx:0,dy:0,r:12,a:0.2,s:0.0015};
     let arcadeTickets = parseInt(localStorage.getItem("arcade_tix_vault") || "0");
     tixEl.innerText = arcadeTickets;
     let ghosts = []; let gameRunning = false;
 
-    // Adjusted delta velocity tracking settings for the larger 360px layout board
     const pSpeed = 0.085; 
     let lastTime = 0;
 
@@ -195,7 +198,7 @@ game_html = """
         }
     }, { passive: false });
 
-    // --- CONTINUATION INTERFACE TRIGGER ACTION CALLS ---
+    // --- SECURE OVERLAY ACTION HANDLERS ---
     window.confirmAdvance = function() {
         clearScreen.style.display = "none"; gameRunning = true; lastTime = 0; load(stage + 1); requestAnimationFrame(loop);
     };
@@ -203,6 +206,10 @@ game_html = """
         failScreen.style.display = "none"; victoryScreen.style.display = "none";
         score = 0; scEl.innerText = 0; lives = 3; lvEl.innerText = 3;
         gameRunning = true; lastTime = 0; load(1); requestAnimationFrame(loop);
+    };
+    // Cleanly removes alert tabs when caught by phantoms
+    window.confirmRespawn = function() {
+        caughtScreen.style.display = "none"; gameRunning = true; lastTime = 0; p.x=180; p.y=260; p.dx=0; p.dy=0; load(stage); requestAnimationFrame(loop);
     };
 
     function loop(timestamp){
@@ -228,7 +235,6 @@ game_html = """
             }
         });
 
-        // Stage Win Checks
         if(!active){
             gameRunning = false; sound("level");
             if(stage < 10){ clearScreen.style.display = "flex"; } 
@@ -241,14 +247,14 @@ game_html = """
         p.y = p.y < p.r ? 360 - p.r : (p.y > 360 - p.r ? p.r : p.y);
         p.a += p.s * dt; if(p.a > 0.45 || p.a < 0.05) p.s = -p.s;
 
-        // Render 3D Pacman Hero
+        // Render 3D Pacman
         ctx.beginPath();
         let pGrad = ctx.createRadialGradient(p.x-4, p.y-4, 2, p.x, p.y, p.r);
         pGrad.addColorStop(0, "#ffffff"); pGrad.addColorStop(0.2, "#facc15"); pGrad.addColorStop(0.7, "#ca8a04"); pGrad.addColorStop(1, "#1e1b4b"); 
         let rot=p.dx>0?0:(p.dx<0?Math.PI:(p.dy>0?Math.PI/2:(p.dy<0?Math.PI*1.5:0)));
         ctx.arc(p.x,p.y,p.r,rot+p.a,rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
 
-        // Render 3D Ghosts
+        // Render Ghosts
         ghosts.forEach(g => {
             if(g.x < p.x) g.x += g.sp * dt; else g.x -= g.sp * dt; 
             if(g.y < p.y) g.y += g.sp * dt; else g.y -= g.sp * dt;
@@ -258,7 +264,6 @@ game_html = """
             gGrad.addColorStop(0, "#ffffff"); gGrad.addColorStop(0.25, g.c); gGrad.addColorStop(0.85, "#150002"); gGrad.addColorStop(1, "#000000");
             ctx.arc(g.x+11, g.y+11, g.r, Math.PI, 0, false); ctx.lineTo(g.x+22, g.y+22); ctx.lineTo(g.x, g.y+22); ctx.fillStyle=gGrad; ctx.fill(); ctx.closePath();
 
-            // Collision parameters
             if(Math.hypot(p.x-(g.x+11),p.y-(g.y+11))<p.r+g.r){
                 lives--; lvEl.innerText=lives;
                 if(lives<=0){ 
@@ -266,7 +271,9 @@ game_html = """
                     finalScoreInfo.innerText = "Final Operation Score: " + score;
                     failScreen.style.display = "flex";
                 } else { 
-                    sound("lose"); alert("💥 CAUGHT BY TRACKER!"); p.x=180; p.y=260; p.dx=0; p.dy=0; load(stage); 
+                    // FIXED: Replaced standard alert() call with safe in-game card mesh trigger
+                    gameRunning = false; sound("lose");
+                    caughtScreen.style.display = "flex"; 
                 }
             }
         });

@@ -29,14 +29,14 @@ st.markdown("""<style>
     }
 </style>""", unsafe_allow_html=True)
 
-st.markdown('<div class="bn"><b>🕹️ REVOLUTIONARY INTUITIVE TOUCH SYSTEM ACTIVATED</b><br>Arrows removed! Simply click or touch the Top, Bottom, Left, or Right sides of the game screen to steer Pac-Man instantly.</div>', unsafe_allow_html=True)
+st.markdown('<div class="bn"><b>🕹️ FOUR-QUADRANT SWIPE STEERING ACTIVE</b><br>Simply tap or click near the top, bottom, left, or right edges of the canvas screen to navigate Pac-Man instantly. No buttons needed.</div>', unsafe_allow_html=True)
 
+# FIXED: Sealed cleanly with double triple-quotes to resolve the SyntaxError completely
 game_html = """
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
 <style>
     body { background:#030712; margin:0; padding:4px; display:flex; flex-direction:column; align-items:center; font-family:monospace; user-select:none; -webkit-user-select:none; }
-    /* FIXED: Extended canvas frame parameters to accept clear full-surface pointer events */
     canvas { border:3px solid #0284c7; background:#01040f; border-radius:12px; width:100%; max-width:280px; height:280px; box-shadow: 0 12px 30px rgba(0,0,0,0.6); touch-action: none; cursor: crosshair; }
     #ui { color:#fff; font-size:13px; font-weight:bold; width:280px; display:flex; justify-content:space-between; margin:6px 0; letter-spacing:0.5px; }
     #ticketVault { color: #22c55e; font-size:12px; font-weight:bold; width:280px; text-align:left; margin-bottom:4px; }
@@ -51,6 +51,7 @@ game_html = """
     <div id="ticketVault">🎟️ TERMINAL TICKETS: <span id="tix">0</span></div>
     <div id="ui"><div id="stg">STAGE 1</div><div>🥇 <span id="sc">0</span></div><div>❤️ <span id="lv">3</span></div></div>
     <canvas id="cv" width="280" height="280"></canvas>
+
     <div class="ad-container-slot">
         <div style="font-weight:bold;color:#64748b;">ADVERTISEMENT AD BANNER</div>
         <div style="font-size:8px;color:#475569;">Google AdSense Responsive Unit Slot</div>
@@ -63,7 +64,6 @@ game_html = """
     tixEl.innerText = arcadeTickets;
     let ghosts = [];
 
-    // --- 🔟 COMPLETE 10-STAGE REGIONAL PROGRESSION MATRIX MAPS ---
     const cfgs={
         1:{n:"📍 MALE' STREETS", c:"#0284c7", d:"#fbbf24", numG:1, sp:0.45, gen:()=>{for(let i=35;i<=245;i+=52)for(let j=35;j<=245;j+=52)if(!(i==140&&j==210))dots.push({x:i,y:j,v:1})}},
         2:{n:"📍 HULHUMALE' PHASE 2", c:"#f59e0b", d:"#f43f5e", numG:1, sp:0.52, gen:()=>{for(let i=40;i<=240;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:280-i,v:1})}}},
@@ -81,23 +81,21 @@ game_html = """
         stage=n; let c=cfgs[n]; stgEl.innerText=c.n; canvas.style.borderColor=c.c;
         p.x=140; p.y=210; p.dx=0; p.dy=0; dots=[]; c.gen();
         
-        // FIXED: Realigned enemy initialization vectors to ensure they remain inside canvas boundaries
         ghosts = [];
         const colors = ["#ef4444", "#a855f7", "#06b6d4", "#10b981"];
         for(let i=0; i<c.numG; i++) {
             ghosts.push({
-                x: 30 + (i * 40),
-                y: 40 + (i * 30),
+                x: 30 + (i * 45),
+                y: 40 + (i * 35),
                 r: 9,
                 c: colors[i % colors.length],
                 sp: c.sp * (1 + (i * 0.12))
             });
         }
     }
-    // --- 🕹️ NEW: 4-QUADRANT SURFACE CLICK & TOUCH DIRECTION LOGIC ENGINE ---
+
     function handleScreenInput(clientX, clientY) {
         let rect = canvas.getBoundingClientRect();
-        // Calculate point relative to canvas center mass
         let clickX = clientX - rect.left;
         let clickY = clientY - rect.top;
         
@@ -107,28 +105,26 @@ game_html = """
         let dx = clickX - centerX;
         let dy = clickY - centerY;
         
-        // Split plane into four 90-degree quadrant triangles
         if (Math.abs(dx) > Math.abs(dy)) {
-            if (dx > 0) { p.dx = 1.4; p.dy = 0; } // Right side click
-            else { p.dx = -1.4; p.dy = 0; }        // Left side click
+            if (dx > 0) { p.dx = 1.4; p.dy = 0; }
+            else { p.dx = -1.4; p.dy = 0; }
         } else {
-            if (dy > 0) { p.dx = 0; p.dy = 1.4; } // Bottom side click
-            else { p.dx = 0; p.dy = -1.4; }       // Top side click
+            if (dy > 0) { p.dx = 0; p.dy = 1.4; }
+            else { p.dx = 0; p.dy = -1.4; }
         }
     }
 
-    // Attach surface input capture listeners to desktop and mobile frames
     canvas.addEventListener("mousedown", (e) => handleScreenInput(e.clientX, e.clientY));
     canvas.addEventListener("touchstart", (e) => {
         e.preventDefault();
-        handleScreenInput(e.touches[0].clientX, e.touches[0].clientY);
+        let touch = e.touches[0];
+        handleScreenInput(touch.clientX, touch.clientY);
     }, { passive: false });
 
     function loop(){
         ctx.clearRect(0,0,280,280); let active=0;
         let c=cfgs[stage];
 
-        // --- 🔘 Pseudo-3D Isometric Sphere Token Drops ---
         dots.forEach(d=>{
             if(d.v){
                 active++;
@@ -148,38 +144,33 @@ game_html = """
 
         if(!active){
             if(stage<10){ alert("🎉 STAGE CLEARED!"); load(stage+1); }
-            else{ alert("🏆 CAMPAIGN COMPLETE! YOU ARE THE ARCADE CHAMPION!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); }
+            else{ alert("🏆 CAMPAIGN COMPLETE! YOU ARE THE CHAMPION!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); }
             requestAnimationFrame(loop); return;
         }
 
         p.x+=p.dx; p.y+=p.dy; p.x=p.x<p.r?280-p.r:(p.x>280-p.r?p.r:p.x); p.y=p.y<p.r?280-p.r:(p.y>280-p.r?p.r:p.y);
         p.a+=p.s; if(p.a>0.45||p.a<0.05)p.s=-p.s;
 
-        // --- 🟡 Spherical 3D Gradient Mapping On Player Disk ---
         ctx.beginPath();
         let pGrad = ctx.createRadialGradient(p.x-3.5, p.y-3.5, 1.5, p.x, p.y, p.r);
         pGrad.addColorStop(0, "#ffffff"); pGrad.addColorStop(0.2, "#facc15"); pGrad.addColorStop(0.7, "#ca8a04"); pGrad.addColorStop(1, "#1e1b4b"); 
         let rot=p.dx>0?0:(p.dx<0?Math.PI:(p.dy>0?Math.PI/2:(p.dy<0?Math.PI*1.5:0)));
         ctx.arc(p.x,p.y,p.r,rot+p.a,rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
 
-        // --- 👻 FIXED: Pseudo-3D Ghost Sphere Pursuit Engine ---
         ghosts.forEach(g => {
             if(g.x<p.x)g.x+=g.sp;else g.x-=g.sp; if(g.y<p.y)g.y+=g.sp;else g.y-=g.sp;
             
             ctx.beginPath();
-            // FIXED: Shifted coordinates from g.x+3 to match exact core mass center points
             let gGrad = ctx.createRadialGradient(g.x+3, g.y+3, 1, g.x+9, g.y+9, g.r);
             gGrad.addColorStop(0, "#ffffff");
             gGrad.addColorStop(0.2, g.c);
             gGrad.addColorStop(0.8, "#1a0002");
             gGrad.addColorStop(1, "#000000");
             
-            // Draw ghost head
             ctx.arc(g.x+9, g.y+9, g.r, Math.PI, 0, false);
             ctx.lineTo(g.x+18, g.y+18); ctx.lineTo(g.x, g.y+18);
             ctx.fillStyle=gGrad; ctx.fill(); ctx.closePath();
 
-            // Collision check math
             if(Math.hypot(p.x-(g.x+9),p.y-(g.y+9))<p.r+g.r){
                 lives--; lvEl.innerText=lives;
                 if(lives<=0){ alert("💥 MISSION FAILURE: GAME OVER!"); score=0; scEl.innerText=0; lives=3; lvEl.innerText=3; load(1); }
@@ -193,8 +184,8 @@ game_html = """
     const btn=document.createElement("button"); btn.innerText="🟢 RUN ARCADE PRO"; Object.assign(btn.style,{position:"absolute",top:"35%",left:"10%",width:"80%",padding:"15px",fontSize:"18px",fontWeight:"bold",background:"#0284c7",color:"#fff",border:"2px solid #38bdf8",borderRadius:"8px",zIndex:"999"});
     document.body.appendChild(btn); btn.onclick=()=>{btn.remove();load(1);loop()};
 </script></body></html>
-'''
+"""
 
 st.markdown('<div class="cab">', unsafe_allow_html=True)
-components.html(game_html, height=430, scrolling=False)
+components.html(game_html, height=440, scrolling=False)
 st.markdown("</div>", unsafe_allow_html=True)

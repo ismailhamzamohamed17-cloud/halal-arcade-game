@@ -31,7 +31,6 @@ st.markdown("""<style>
 
 st.markdown('<div class="bn"><b>🕹️ FOUR-QUADRANT SWIPE STEERING ACTIVE</b><br>Simply tap or click near the top, bottom, left, or right edges of the canvas screen to navigate Pac-Man instantly. No buttons needed.</div>', unsafe_allow_html=True)
 
-# FIXED: Sealed cleanly with double triple-quotes to resolve the SyntaxError completely
 game_html = """
 <!DOCTYPE html><html><head>
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
@@ -51,7 +50,6 @@ game_html = """
     <div id="ticketVault">🎟️ TERMINAL TICKETS: <span id="tix">0</span></div>
     <div id="ui"><div id="stg">STAGE 1</div><div>🥇 <span id="sc">0</span></div><div>❤️ <span id="lv">3</span></div></div>
     <canvas id="cv" width="280" height="280"></canvas>
-
     <div class="ad-container-slot">
         <div style="font-weight:bold;color:#64748b;">ADVERTISEMENT AD BANNER</div>
         <div style="font-size:8px;color:#475569;">Google AdSense Responsive Unit Slot</div>
@@ -64,17 +62,19 @@ game_html = """
     tixEl.innerText = arcadeTickets;
     let ghosts = [];
 
+    const pSpeed = 0.9; 
+
     const cfgs={
-        1:{n:"📍 MALE' STREETS", c:"#0284c7", d:"#fbbf24", numG:1, sp:0.45, gen:()=>{for(let i=35;i<=245;i+=52)for(let j=35;j<=245;j+=52)if(!(i==140&&j==210))dots.push({x:i,y:j,v:1})}},
-        2:{n:"📍 HULHUMALE' PHASE 2", c:"#f59e0b", d:"#f43f5e", numG:1, sp:0.52, gen:()=>{for(let i=40;i<=240;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:280-i,v:1})}}},
-        3:{n:"📍 CROSSROADS HARBOR", c:"#10b981", d:"#a855f7", numG:2, sp:0.55, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:140+Math.cos(a)*75,y:140+Math.sin(a)*75,v:1})}},
-        4:{n:"📍 MAAFUSHI LAGOON", c:"#ec4899", d:"#06b6d4", numG:2, sp:0.58, gen:()=>{for(let i=30;i<=250;i+=44)dots.push({x:i,y:140,v:1}),dots.push({x:140,y:i,v:1})}},
-        5:{n:"📍 BANOS ATOLL RESORT", c:"#8b5cf6", d:"#10b981", numG:2, sp:0.62, gen:()=>{for(let i=40;i<=240;i+=50)for(let j=40;j<=240;j+=50)dots.push({x:i,y:j,v:1})}},
-        6:{n:"📍 DHIGURAH SHIPWRECK", c:"#3b82f6", d:"#f97316", numG:3, sp:0.65, gen:()=>{for(let i=30;i<=250;i+=35)dots.push({x:i,y:40,v:1}),dots.push({x:i,y:240,v:1})}},
-        7:{n:"📍 THODDOO FARMLANDS", c:"#22c55e", d:"#eab308", numG:3, sp:0.68, gen:()=>{for(let r=30;r<=110;r+=40)for(let a=0;a<Math.PI*2;a+=Math.PI/3)dots.push({x:140+Math.cos(a)*r,y:140+Math.sin(a)*r,v:1})}},
-        8:{n:"📍 GAN AIRFIELD BASE", c:"#64748b", d:"#ec4899", numG:3, sp:0.72, gen:()=>{for(let i=20;i<=260;i+=30){dots.push({x:i,y:140,v:1})}}},
-        9:{n:"📍 HANIFARU BAY REEF", c:"#06b6d4", d:"#3b82f6", numG:3, sp:0.75, gen:()=>{for(let i=30;i<=250;i+=55)for(let j=30;j<=250;j+=55)dots.push({x:i,y:j,v:1})}},
-        10:{n:"👑 ADDU CITY FINALS", c:"#ef4444", d:"#ffffff", numG:4, sp:0.82, gen:()=>{for(let i=20;i<=260;i+=40)for(let j=20;j<=260;j+=40)dots.push({x:i,y:j,v:1})}}
+        1:{n:"📍 MALE' STREETS", c:"#0284c7", d:"#fbbf24", numG:1, sp:0.22, gen:()=>{for(let i=35;i<=245;i+=52)for(let j=35;j<=245;j+=52)if(!(i==140&&j==210))dots.push({x:i,y:j,v:1})}},
+        2:{n:"📍 HULHUMALE' PHASE 2", c:"#f59e0b", d:"#f43f5e", numG:1, sp:0.28, gen:()=>{for(let i=40;i<=240;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:280-i,v:1})}}},
+        3:{n:"📍 CROSSROADS HARBOR", c:"#10b981", d:"#a855f7", numG:2, sp:0.30, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:140+Math.cos(a)*75,y:140+Math.sin(a)*75,v:1})}},
+        4:{n:"📍 MAAFUSHI LAGOON", c:"#ec4899", d:"#06b6d4", numG:2, sp:0.34, gen:()=>{for(let i=30;i<=250;i+=44)dots.push({x:i,y:140,v:1}),dots.push({x:140,y:i,v:1})}},
+        5:{n:"📍 BANOS ATOLL RESORT", c:"#8b5cf6", d:"#10b981", numG:2, sp:0.38, gen:()=>{for(let i=40;i<=240;i+=50)for(let j=40;j<=240;j+=50)dots.push({x:i,y:j,v:1})}},
+        6:{n:"📍 DHIGURAH SHIPWRECK", c:"#3b82f6", d:"#f97316", numG:3, sp:0.40, gen:()=>{for(let i=30;i<=250;i+=35)dots.push({x:i,y:40,v:1}),dots.push({x:i,y:240,v:1})}},
+        7:{n:"📍 THODDOO FARMLANDS", c:"#22c55e", d:"#eab308", numG:3, sp:0.44, gen:()=>{for(let r=30;r<=110;r+=40)for(let a=0;a<Math.PI*2;a+=Math.PI/3)dots.push({x:140+Math.cos(a)*r,y:140+Math.sin(a)*r,v:1})}},
+        8:{n:"📍 GAN AIRFIELD BASE", c:"#64748b", d:"#ec4899", numG:3, sp:0.48, gen:()=>{for(let i=20;i<=260;i+=30){dots.push({x:i,y:140,v:1})}}},
+        9:{n:"📍 HANIFARU BAY REEF", c:"#06b6d4", d:"#3b82f6", numG:3, sp:0.52, gen:()=>{for(let i=30;i<=250;i+=55)for(let j=30;j<=250;j+=55)dots.push({x:i,y:j,v:1})}},
+        10:{n:"👑 ADDU CITY FINALS", c:"#ef4444", d:"#ffffff", numG:4, sp:0.58, gen:()=>{for(let i=20;i<=260;i+=40)for(let j=20;j<=260;j+=40)dots.push({x:i,y:j,v:1})}}
     };
 
     function load(n){
@@ -85,15 +85,14 @@ game_html = """
         const colors = ["#ef4444", "#a855f7", "#06b6d4", "#10b981"];
         for(let i=0; i<c.numG; i++) {
             ghosts.push({
-                x: 30 + (i * 45),
-                y: 40 + (i * 35),
+                x: 40 + (i * 35),
+                y: 50 + (i * 30),
                 r: 9,
                 c: colors[i % colors.length],
-                sp: c.sp * (1 + (i * 0.12))
+                sp: c.sp * (1 + (i * 0.1))
             });
         }
     }
-
     function handleScreenInput(clientX, clientY) {
         let rect = canvas.getBoundingClientRect();
         let clickX = clientX - rect.left;
@@ -106,19 +105,20 @@ game_html = """
         let dy = clickY - centerY;
         
         if (Math.abs(dx) > Math.abs(dy)) {
-            if (dx > 0) { p.dx = 1.4; p.dy = 0; }
-            else { p.dx = -1.4; p.dy = 0; }
+            if (dx > 0) { p.dx = pSpeed; p.dy = 0; }
+            else { p.dx = -pSpeed; p.dy = 0; }
         } else {
-            if (dy > 0) { p.dx = 0; p.dy = 1.4; }
-            else { p.dx = 0; p.dy = -1.4; }
+            if (dy > 0) { p.dx = 0; p.dy = pSpeed; }
+            else { p.dx = 0; p.dy = -pSpeed; }
         }
     }
 
     canvas.addEventListener("mousedown", (e) => handleScreenInput(e.clientX, e.clientY));
     canvas.addEventListener("touchstart", (e) => {
         e.preventDefault();
-        let touch = e.touches[0];
-        handleScreenInput(touch.clientX, touch.clientY);
+        if(e.touches && e.touches.length > 0) {
+            handleScreenInput(e.touches[0].clientX, e.touches[0].clientY);
+        }
     }, { passive: false });
 
     function loop(){
@@ -129,7 +129,7 @@ game_html = """
             if(d.v){
                 active++;
                 ctx.beginPath();
-                let dotGrad = ctx.createRadialGradient(d.x-1.5, d.y-1.5, 0.5, d.x, d.y, 4.5);
+                let dotGrad = ctx.createRadialGradient(d.x-1.2, d.y-1.5, 0.5, d.x, d.y, 4.5);
                 dotGrad.addColorStop(0, "#ffffff"); dotGrad.addColorStop(0.3, c.d); dotGrad.addColorStop(1, "#030712");
                 ctx.arc(d.x,d.y,4.5,0,Math.PI*2); ctx.fillStyle=dotGrad; ctx.fill(); ctx.closePath();
                 
@@ -161,10 +161,10 @@ game_html = """
             if(g.x<p.x)g.x+=g.sp;else g.x-=g.sp; if(g.y<p.y)g.y+=g.sp;else g.y-=g.sp;
             
             ctx.beginPath();
-            let gGrad = ctx.createRadialGradient(g.x+3, g.y+3, 1, g.x+9, g.y+9, g.r);
+            let gGrad = ctx.createRadialGradient(g.x+6, g.y+5, 1, g.x+9, g.y+9, g.r);
             gGrad.addColorStop(0, "#ffffff");
-            gGrad.addColorStop(0.2, g.c);
-            gGrad.addColorStop(0.8, "#1a0002");
+            gGrad.addColorStop(0.25, g.c);
+            gGrad.addColorStop(0.85, "#150002");
             gGrad.addColorStop(1, "#000000");
             
             ctx.arc(g.x+9, g.y+9, g.r, Math.PI, 0, false);

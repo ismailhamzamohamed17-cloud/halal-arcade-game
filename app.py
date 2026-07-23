@@ -34,7 +34,7 @@ st.markdown("""<style>
     }
 </style>""", unsafe_allow_html=True)
 
-st.markdown('<div class="bn"><b>🥥 COCONUT HUNTER: ADVANCED 3D PIPELINE</b><br>Glitches wiped! Coconuts now feature clean 3-dot triangular pores. Characters upgraded with minimal horizontal black tracking eyes over an advanced moonlit island backdrop.</div>', unsafe_allow_html=True)
+st.markdown('<div class="bn"><b>🥥 COCONUT HUNTER: MULTI-ENVIRONMENT MATRICES</b><br>Stages dynamically shift atmospheres! Cyber-City, Crimson Sunset, and Volcanic Reef themes load automatically relative to your active island milestone.</div>', unsafe_allow_html=True)
 
 game_html = """
 <!DOCTYPE html><html><head>
@@ -43,7 +43,6 @@ game_html = """
     body { background:#030712; margin:0; padding:4px; display:flex; flex-direction:column; align-items:center; font-family:monospace; user-select:none; -webkit-user-select:none; }
     
     #arenaWrapper { position: relative; width: 360px; height: 360px; }
-    /* Advanced 3D Perspective Border Frame Styling */
     canvas { border:3px solid #10b981; background:#020617; border-radius:12px; width:360px; height:360px; box-shadow: 0 16px 40px rgba(0,0,0,0.85); touch-action: none; cursor: crosshair; }
     
     #ui { color:#fff; font-size:14px; font-weight:bold; width:360px; display:flex; justify-content:space-between; margin:6px 0; letter-spacing:0.5px; }
@@ -115,17 +114,18 @@ game_html = """
     const pSpeed = 0.085; 
     let lastTime = 0;
 
+    // --- 🔟 10-STAGE DICTIONARY TRACKING ADVANCED AMBIENT ENVIRO DESIGN WRAPPERS ---
     const cfgs={
-        1:{n:"🌴 MALE' ATOL ROAD", c:"#0284c7", d:"#78350f", numG:1, sp:0.016, gen:()=>{for(let i=40;i<=320;i+=70)for(let j=40;j<=320;j+=70)if(!(i==180&&j==260))dots.push({x:i,y:j,v:1})}},
-        2:{n:"🌴 HULHUMALE' PLAINS", c:"#f59e0b", d:"#78350f", numG:1, sp:0.020, gen:()=>{for(let i=40;i<=320;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:360-i,v:1})}}},
-        3:{n:"🌴 CROSSROADS LAGOON", c:"#10b981", d:"#78350f", numG:2, sp:0.024, gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/5)dots.push({x:180+Math.cos(a)*110,y:180+Math.sin(a)*110,v:1})}},
-        4:{n:"🌴 MAAFUSHI COASTS", c:"#ec4899", d:"#78350f", numG:2, sp:0.028, gen:()=>{for(let i=35;i<=325;i+=40)dots.push({x:i,y:180,v:1}),dots.push({x:180,y:i,v:1})}},
-        5:{n:"🌴 BANOS SAND BAR", c:"#8b5cf6", d:"#78350f", numG:2, sp:0.032, gen:()=>{for(let i=45;i<=315;i+=45)for(let j=45;j<=315;j+=45)dots.push({x:i,y:j,v:1})}},
-        6:{n:"🌴 DHIGURAH REEF BAY", c:"#3b82f6", d:"#78350f", numG:3, sp:0.036, gen:()=>{for(let i=35;i<=325;i+=35)dots.push({x:i,y:55,v:1}),dots.push({x:i,y:305,v:1})}},
-        7:{n:"🌴 THODDOO COCONUT GROVE", c:"#22c55e", d:"#78350f", numG:3, sp:0.040, gen:()=>{for(let r=45;r<=135;r+=45)for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
-        8:{n:"🌴 GAN AIRSTRIP GRID", c:"#64748b", d:"#78350f", numG:3, sp:0.044, gen:()=>{for(let i=30;i<=330;i+=30){dots.push({x:i,y:180,v:1});dots.push({x:i,y:90,v:1});dots.push({x:i,y:270,v:1})}}},
-        9:{n:"🌴 HANIFARU OCEAN WAY", c:"#06b6d4", d:"#78350f", numG:3, sp:0.048, gen:()=>{for(let i=45;i<=315;i+=54)for(let j=45;j<=315;j+=54)dots.push({x:i,y:j,v:1})}},
-        10:{n:"👑 ADDU FINALS", c:"#ef4444", d:"#ffffff", numG:4, sp:0.054, gen:()=>{for(let i=30;i<=330;i+=42)for(let j=30;j<=330;j+=42)dots.push({x:i,y:j,v:1})}}
+        1:{n:"📍 MALE' CITY NET", c:"#00ff66", d:"#78350f", numG:1, sp:0.016, bgMode:"city", gen:()=>{for(let i=40;i<=320;i+=70)for(let j=40;j<=320;j+=70)if(!(i==180&&j==260))dots.push({x:i,y:j,v:1})}},
+        2:{n:"📍 HULHUMALE' PRO", c:"#00ff66", d:"#78350f", numG:1, sp:0.020, bgMode:"city", gen:()=>{for(let i=40;i<=320;i+=40){dots.push({x:i,y:i,v:1});dots.push({x:i,y:360-i,v:1})}}},
+        3:{n:"📍 CROSSROADS SUNSET", c:"#f43f5e", d:"#78350f", numG:2, sp:0.024, bgMode:"sunset", gen:()=>{for(let a=0;a<Math.PI*2;a+=Math.PI/5)dots.push({x:180+Math.cos(a)*110,y:180+Math.sin(a)*110,v:1})}},
+        4:{n:"📍 MAAFUSHI COASTS", c:"#f43f5e", d:"#78350f", numG:2, sp:0.028, bgMode:"sunset", gen:()=>{for(let i=35;i<=325;i+=40)dots.push({x:i,y:180,v:1}),dots.push({x:180,y:i,v:1})}},
+        5:{n:"📍 BANOS SAND BAR", c:"#f43f5e", d:"#78350f", numG:2, sp:0.032, bgMode:"sunset", gen:()=>{for(let i=45;i<=315;i+=45)for(let j=45;j<=315;j+=45)dots.push({x:i,y:j,v:1})}},
+        6:{n:"📍 DHIGURAH REEF", c:"#a855f7", d:"#78350f", numG:3, sp:0.036, bgMode:"reef", gen:()=>{for(let i=35;i<=325;i+=35)dots.push({x:i,y:55,v:1}),dots.push({x:i,y:305,v:1})}},
+        7:{n:"📍 THODDOO FARMS", c:"#a855f7", d:"#78350f", numG:3, sp:0.040, bgMode:"reef", gen:()=>{for(let r=45;r<=135;r+=45)for(let a=0;a<Math.PI*2;a+=Math.PI/4)dots.push({x:180+Math.cos(a)*r,y:180+Math.sin(a)*r,v:1})}},
+        8:{n:"📍 GAN BASE REEFS", c:"#a855f7", d:"#78350f", numG:3, sp:0.44, bgMode:"reef", gen:()=>{for(let i=30;i<=330;i+=30){dots.push({x:i,y:180,v:1});dots.push({x:i,y:90,v:1});dots.push({x:i,y:270,v:1})}}},
+        9:{n:"📍 HANIFARU OCEAN WAY", c:"#a855f7", d:"#78350f", numG:3, sp:0.048, bgMode:"reef", gen:()=>{for(let i=45;i<=315;i+=54)for(let j=45;j<=315;j+=54)dots.push({x:i,y:j,v:1})}},
+        10:{n:"👑 ADDU FINALS PRO", c:"#00ff66", d:"#ffffff", numG:4, sp:0.054, bgMode:"city", gen:()=>{for(let i=30;i<=330;i+=42)for(let j=30;j<=330;j+=42)dots.push({x:i,y:j,v:1})}}
     };
 
     function load(n){
@@ -157,7 +157,7 @@ game_html = """
             osc.start(); osc.stop(audioCtx.currentTime + 0.06);
         } else if (type === "lose") {
             osc.type = "sawtooth"; osc.frequency.setValueAtTime(350, audioCtx.currentTime);
-            osc.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.35);
+            osc.frequency.exponentialRampToValueAtTime(60, audioCtx.currentTime + 0.35);
             gain.gain.setValueAtTime(0.25, audioCtx.currentTime);
             osc.start(); osc.stop(audioCtx.currentTime + 0.35);
         } else if (type === "boom") {
@@ -214,43 +214,54 @@ game_html = """
         let dt = timestamp - lastTime; if (dt > 60) dt = 60; lastTime = timestamp;
 
         ctx.clearRect(0,0,360,360);
+        let c=cfgs[stage];
 
-        // --- 🌅 ADVANCED 3D ENVIRONMENT: MOONLIT ISLAND COASTLINE ENGINE BACKGROUND ---
-        // 1. Dark Ocean Blue Horizon Sky Gradient
-        let skyGrad = ctx.createLinearGradient(0, 0, 0, 160);
-        skyGrad.addColorStop(0, "#020617"); skyGrad.addColorStop(1, "#1e1b4b");
-        ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, 360, 160);
-        
-        // 2. Layered Deep Sea Puddle Water Mesh
-        let seaGrad = ctx.createLinearGradient(0, 160, 0, 360);
-        seaGrad.addColorStop(0, "#030712"); seaGrad.addColorStop(1, "#022c22");
-        ctx.fillStyle = seaGrad; ctx.fillRect(0, 160, 360, 200);
-
-        // 3. Vector Shaded Curved Island Island Coastline silhouette
-        ctx.beginPath(); ctx.moveTo(0, 240);
-        ctx.bezierCurveTo(90, 200, 270, 290, 360, 220);
-        ctx.lineTo(360, 360); ctx.lineTo(0, 360);
-        ctx.fillStyle = "rgba(4, 47, 46, 0.4)"; ctx.fill(); ctx.closePath();
+        // --- 📊 DYNAMIC ENVIRONMENTAL DRAWING PROCESSING MATRIX ---
+        if (c.bgMode === "city") {
+            // Cyber-City Night Grid Logic
+            ctx.fillStyle = "#02040a"; ctx.fillRect(0, 0, 360, 360);
+            ctx.fillStyle = "#0b0f19";
+            ctx.fillRect(10, 80, 70, 200); ctx.fillRect(90, 40, 80, 240);
+            ctx.fillRect(190, 90, 65, 190); ctx.fillRect(270, 60, 80, 220);
+            ctx.fillStyle = "rgba(0, 255, 102, 0.05)";
+            for(let i=30; i<360; i+=45) { ctx.beginPath(); ctx.moveTo(i, 0); ctx.lineTo(i, 360); ctx.stroke(); ctx.closePath(); }
+        } else if (c.bgMode === "sunset") {
+            // Crimson Atoll Sunset Logic
+            let skyGrad = ctx.createLinearGradient(0, 0, 0, 170);
+            skyGrad.addColorStop(0, "#2e1065"); skyGrad.addColorStop(1, "#f43f5e");
+            ctx.fillStyle = skyGrad; ctx.fillRect(0, 0, 360, 170);
+            let seaGrad = ctx.createLinearGradient(0, 170, 0, 360);
+            seaGrad.addColorStop(0, "#111827"); seaGrad.addColorStop(1, "#4c0519");
+            ctx.fillStyle = seaGrad; ctx.fillRect(0, 170, 360, 190);
+            ctx.fillStyle = "#f59e0b"; ctx.fillRect(0, 169, 360, 2);
+        } else if (c.bgMode === "reef") {
+            // Volcanic Sand Reefs Logic
+            let rSky = ctx.createLinearGradient(0, 0, 0, 180);
+            rSky.addColorStop(0, "#090514"); rSky.addColorStop(1, "#1e1b4b");
+            ctx.fillStyle = rSky; ctx.fillRect(0, 0, 360, 180);
+            let rFloor = ctx.createLinearGradient(0, 180, 0, 360);
+            rFloor.addColorStop(0, "#020617"); rFloor.addColorStop(1, "#2e1065");
+            ctx.fillStyle = rFloor; ctx.fillRect(0, 180, 360, 180);
+            ctx.beginPath(); ctx.arc(180, 90, 30, 0, Math.PI*2);
+            ctx.fillStyle = "rgba(168, 85, 247, 0.15)"; ctx.fill(); ctx.closePath();
+        }
 
         let active=0;
-        // --- 🥥 RENDER DETAILED COCONUTS WITH EXACT 3-DOT TRIANGULAR PORE MATRIX ---
+        // --- 🥥 DRAW 3D TRIANGULAR PORE COCONUT NODES ---
         dots.forEach(d=>{
             if(d.v){
                 active++;
                 ctx.beginPath();
-                let dotGrad = ctx.createRadialGradient(d.x-1.5, d.y-1.5, 0.5, d.x, d.y, 7);
-                dotGrad.addColorStop(0, "#b45309"); // Shell gloss top shine highlight
-                dotGrad.addColorStop(0.5, "#78350f"); // Core brown coconut meat coloring
-                dotGrad.addColorStop(1, "#1e0700"); // Depth shadows edge
-                ctx.arc(d.x, d.y, 7, 0, Math.PI*2); ctx.fillStyle=dotGrad; ctx.fill(); ctx.closePath();
+                let dotGrad = ctx.createRadialGradient(d.x-1.5, d.y-1.5, 0.5, d.x, d.y, 6.5);
+                dotGrad.addColorStop(0, "#d97706"); dotGrad.addColorStop(0.5, "#78350f"); dotGrad.addColorStop(1, "#1e0700");
+                ctx.arc(d.x, d.y, 6.5, 0, Math.PI*2); ctx.fillStyle=dotGrad; ctx.fill(); ctx.closePath();
                 
-                // FIXED: Draws three precise dark brown dots positioned cleanly in a triangular formation
                 ctx.fillStyle = "#120300";
-                ctx.beginPath(); ctx.arc(d.x, d.y - 2.5, 1, 0, Math.PI*2); ctx.fill(); ctx.closePath();     // Top corner dot
-                ctx.beginPath(); ctx.arc(d.x - 2, d.y + 1.5, 1, 0, Math.PI*2); ctx.fill(); ctx.closePath();   // Bottom left corner dot
-                ctx.beginPath(); ctx.arc(d.x + 2, d.y + 1.5, 1, 0, Math.PI*2); ctx.fill(); ctx.closePath();   // Bottom right corner dot
+                ctx.beginPath(); ctx.arc(d.x, d.y - 2.5, 1, 0, Math.PI*2); ctx.fill(); ctx.closePath();     
+                ctx.beginPath(); ctx.arc(d.x - 2, d.y + 1.5, 1, 0, Math.PI*2); ctx.fill(); ctx.closePath();   
+                ctx.beginPath(); ctx.arc(d.x + 2, d.y + 1.5, 1, 0, Math.PI*2); ctx.fill(); ctx.closePath();   
                 
-                if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+7){
+                if(Math.hypot(p.x-d.x,p.y-d.y)<p.r+6.5){
                     d.v=0; score+=10; scEl.innerText=score; sound("waka");
                     arcadeTickets += 1; localStorage.setItem("arcade_tix_vault", arcadeTickets.toString()); tixEl.innerText = arcadeTickets;
                 }
@@ -268,29 +279,24 @@ game_html = """
         p.y = p.y < p.r ? 360 - p.r : (p.y > 360 - p.r ? p.r : p.y);
         p.a += p.s * dt; if(p.a > 0.45 || p.a < 0.05) p.s = -p.s;
 
-        // --- 🥥 3D RE-SHADED COCONUT HERO DISK WITH DYNAMIC ORIENTATION LINES ---
+        // Render 3D Coconut Player
         ctx.beginPath();
         let pGrad = ctx.createRadialGradient(p.x-4, p.y-4, 2, p.x, p.y, p.r);
-        pGrad.addColorStop(0, "#fed7aa"); pGrad.addColorStop(0.3, "#92400e"); pGrad.addColorStop(0.8, "#451a03"); pGrad.addColorStop(1, "#1c0700"); 
+        pGrad.addColorStop(0, "#ffedd5"); pGrad.addColorStop(0.3, "#b45309"); pGrad.addColorStop(0.8, "#78350f"); pGrad.addColorStop(1, "#451a03"); 
         let rot=p.dx>0?0:(p.dx<0?Math.PI:(p.dy>0?Math.PI/2:(p.dy<0?Math.PI*1.5:0)));
         ctx.arc(p.x, p.y, p.r, rot+p.a, rot+Math.PI*2-p.a); ctx.lineTo(p.x,p.y); ctx.fillStyle=pGrad; ctx.fill(); ctx.closePath();
 
-        // FIXED: Render sleek horizontal tracking visor band with black dot pupil eye
+        // Sleek Minimal Horizontal Slot Pupil Eye
         let eyeAngle = rot + 0.35;
-        let pEyeX = p.x + Math.cos(eyeAngle) * 5.5;
-        let pEyeY = p.y + Math.sin(eyeAngle) * 5.5;
-        
-        // Horizontal slot shade mask background
-        ctx.strokeStyle = "rgba(28, 7, 0, 0.6)"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
+        let pEyeX = p.x + Math.cos(eyeAngle) * 5.5; let pEyeY = p.y + Math.sin(eyeAngle) * 5.5;
+        ctx.strokeStyle = "rgba(28, 7, 0, 0.7)"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
         ctx.beginPath(); ctx.moveTo(pEyeX - 3.5, pEyeY); ctx.lineTo(pEyeX + 3.5, pEyeY); ctx.stroke(); ctx.closePath();
-        // Centered minimal sharp black dot eye
         ctx.beginPath(); ctx.arc(pEyeX, pEyeY, 1.4, 0, Math.PI*2); ctx.fillStyle = "#000000"; ctx.fill(); ctx.closePath();
 
-        // --- 🏃 RIVAL COCONUT HUNTERS TRACKING ENGINE MESH ---
+        // Render 3D Rivals
         ghosts.forEach(g => {
             if(g.x < p.x) { g.x += g.sp * dt; g.dx = 1; } else { g.x -= g.sp * dt; g.dx = -1; }
             if(g.y < p.y) { g.y += g.sp * dt; g.dy = 1; } else { g.y -= g.sp * dt; g.dy = -1; }
-            
             g.a += g.s * dt; if(g.a > 0.45 || g.a < 0.05) g.s = -g.s;
 
             ctx.beginPath();
@@ -299,12 +305,8 @@ game_html = """
             let gRot = g.dx > 0 ? 0 : (g.dx < 0 ? Math.PI : (g.dy > 0 ? Math.PI/2 : 0));
             ctx.arc(g.x, g.y, g.r, gRot+g.a, gRot+Math.PI*2-g.a); ctx.lineTo(g.x, g.y); ctx.fillStyle=gGrad; ctx.fill(); ctx.closePath();
 
-            // FIXED: Render matching minimal horizontal black dot eyes for competitive hunters
-            let gEyeAngle = gRot + 0.3;
-            let gEyeX = g.x + Math.cos(gEyeAngle) * 5;
-            let gEyeY = g.y + Math.sin(gEyeAngle) * 5;
-            
-            ctx.strokeStyle = "rgba(0, 0, 0, 0.5)"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
+            let gEyeAngle = gRot + 0.3; let gEyeX = g.x + Math.cos(gEyeAngle) * 5; let gEyeY = g.y + Math.sin(gEyeAngle) * 5;
+            ctx.strokeStyle = "rgba(0, 0, 0, 0.6)"; ctx.lineWidth = 2.5; ctx.lineCap = "round";
             ctx.beginPath(); ctx.moveTo(gEyeX - 3, gEyeY); ctx.lineTo(gEyeX + 3, gEyeY); ctx.stroke(); ctx.closePath();
             ctx.beginPath(); ctx.arc(gEyeX, gEyeY, 1.4, 0, Math.PI*2); ctx.fillStyle = "#000000"; ctx.fill(); ctx.closePath();
 
@@ -316,12 +318,11 @@ game_html = """
                     failScreen.style.display = "flex";
                 } else { 
                     gameRunning = false; sound("lose"); caughtScreen.style.display = "flex"; 
-                }
-            }
         });
 
         if (gameRunning) requestAnimationFrame(loop);
     }
+
     const btn=document.createElement("button"); 
     btn.innerText="🥥 LAUNCH COCONUT HUNTER PRO"; 
     Object.assign(btn.style,{
@@ -356,4 +357,3 @@ game_html = """
 st.markdown('<div class="cab">', unsafe_allow_html=True)
 components.html(game_html, height=520, scrolling=False)
 st.markdown("</div>", unsafe_allow_html=True)
-
